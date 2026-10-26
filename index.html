@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reportes Hycite CHASEP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#064180; --blue:#006BB5; --bg:#F4F6F9; --card:#FFFFFF; --ink:#1A1A1A; --ink2:#5B6470; --line:#E3E8EE;
+  --soft:#E8F1FA; --up:#1E7D45; --down:#C0392B; --warn:#9A7B0A;
+  --s1:#2a78d6; --s2:#eb6834; --grid:#E8ECF0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F141B; --card:#18202B; --ink:#E8ECF0; --ink2:#A3AEBB; --line:#273242; --soft:#1E2A3A;
+    --up:#4CC07F; --down:#F07065; --warn:#E3C04A; --s1:#3987e5; --s2:#d95926; --grid:#273242;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F141B; --card:#18202B; --ink:#E8ECF0; --ink2:#A3AEBB; --line:#273242; --soft:#1E2A3A;
+  --up:#4CC07F; --down:#F07065; --warn:#E3C04A; --s1:#3987e5; --s2:#d95926; --grid:#273242;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+header{background:var(--navy);color:#fff;padding:18px 16px 0}
+.wrap{max-width:1200px;margin:0 auto}
+.top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:20px;margin:0;letter-spacing:.2px}
+.sub{color:#E8ECF0;font-size:13px;margin-top:2px}
+.hist{display:flex;gap:8px;align-items:center;font-size:13px;color:#E8ECF0}
+.hist select{background:#0b356a;color:#fff;border:1px solid #2c5f9e;border-radius:8px;padding:6px 8px;font-size:13px}
+nav{display:flex;gap:4px;margin-top:14px;overflow-x:auto}
+nav button{background:transparent;border:0;color:#E8ECF0;padding:10px 14px;font-size:14px;font-weight:600;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--bg);color:var(--navy)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav button.on{color:#fff}}
+main{padding:16px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--ink2);padding:7px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+select.f,input.f{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
+input.f{min-width:200px;flex:1;max-width:320px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;border-left:4px solid var(--blue)}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink2);font-weight:600}
+.kpi .v{font-size:24px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--ink2);margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 10px;color:var(--ink)}
+.card h2 small{font-weight:400;color:var(--ink2);font-size:12px;margin-left:6px}
+.chartbox{position:relative;height:360px}
+.chartbox.sm{height:280px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600;white-space:nowrap;cursor:pointer;user-select:none}
+th.n,td.n{text-align:right}
+td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:nth-child(even) td{background:var(--soft)}
+.up{color:var(--up);font-weight:600}.down{color:var(--down);font-weight:600}.mut{color:var(--ink2)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;color:#fff;background:var(--blue);margin-left:6px}
+.pill.baja{background:#939393}
+.note{font-size:12px;color:var(--ink2);margin:6px 0 0}
+.warnbox{background:#FFF6D6;color:#5c4700;border:1px solid #E9D48A;border-radius:10px;padding:8px 12px;font-size:12px;margin-bottom:12px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--ink2);margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.hidden{display:none}
+.count{font-size:12px;color:var(--ink2)}
+footer{color:var(--ink2);font-size:12px;text-align:center;padding:10px 16px 30px}
+@media (max-width:600px){.kpi .v{font-size:20px}.chartbox{height:300px}h1{font-size:18px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top">
+    <div><h1>Reportes Hycite · CHASEP 13588</h1><div class="sub" id="subtitulo">Cargando…</div></div>
+    <label class="hist">Corte <select id="selHist"></select></label>
+  </div>
+  <nav id="tabs">
+    <button data-t="compras" class="on">Compras</button>
+    <button data-t="ventas">Ventas</button>
+    <button data-t="bonos">Bonos mensuales</button>
+    <button data-t="fondo">Fondo Network Leader</button>
+  </nav>
+</div></header>
+
+<main><div class="wrap">
+  <div id="avisos"></div>
+
+  <!-- COMPRAS / VENTAS -->
+  <section id="secCV">
+    <div class="controls">
+      <div class="seg" id="segPer"><button data-v="MTD" class="on">Mes a la fecha</button><button data-v="YTD">Año a la fecha</button></div>
+      <div class="seg" id="segTipo"><button data-v="MP" class="on">Mercancía + premiums</button><button data-v="M">Solo mercancía</button></div>
+      <select class="f" id="selPrem"><option value="">Todos los premiers</option><option>CHASEP</option><option>MEJAB</option></select>
+      <select class="f" id="selSub"><option value="">Todos los subterritorios</option></select>
+    </div>
+    <div class="kpis" id="kpisCV"></div>
+    <div class="card">
+      <h2 id="tSubChart">Por subterritorio</h2>
+      <div class="legend"><span><i style="background:var(--s1)"></i><b id="lgAct">Actual</b></span><span><i style="background:var(--s2)"></i><b id="lgAnt">Año anterior</b></span></div>
+      <div class="chartbox"><canvas id="chSub"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Subterritorios <small>USD · compras/ventas personales de cada distribuidor sumadas por subterritorio</small></h2>
+      <div class="tbl"><table id="tbSub"></table></div>
+    </div>
+    <div class="card">
+      <h2>Distribuidores <small id="cntDist"></small></h2>
+      <div class="controls" style="margin-bottom:8px">
+        <input class="f" id="q" placeholder="Buscar nombre o número…">
+        <select class="f" id="selAct"><option value="">Todos</option><option value="act">Con actividad</option><option value="sin">Sin actividad</option><option value="nuevo">Nuevos vs año ant.</option><option value="cae">En caída</option><option value="crece">En crecimiento</option></select>
+      </div>
+      <div class="tbl" style="max-height:560px"><table id="tbDist"></table></div>
+      <p class="note">“Grupo” = compras/ventas del distribuidor más toda su línea descendente en el portal. Subterritorio según organigrama; los distribuidores nuevos que no están en el organigrama se asignan por su línea de patrocinio (marcados con *).</p>
+    </div>
+  </section>
+
+  <!-- BONOS -->
+  <section id="secBonos" class="hidden">
+    <div class="kpis" id="kpisB"></div>
+    <div class="card">
+      <h2>Bonos mensuales por mes <small>MXN · total pagado</small></h2>
+      <div class="legend" id="lgB"></div>
+      <div class="chartbox"><canvas id="chB"></canvas></div>
+    </div>
+    <div class="card"><h2>Detalle mensual <small>MXN (USD al tipo de cambio del portal)</small></h2><div class="tbl" style="max-height:520px"><table id="tbB"></table></div></div>
+  </section>
+
+  <!-- FONDO -->
+  <section id="secFondo" class="hidden">
+    <div class="kpis" id="kpisF"></div>
+    <div class="card"><h2>Saldo del fondo al cierre de cada mes <small>MXN</small></h2><div class="chartbox sm"><canvas id="chFS"></canvas></div></div>
+    <div class="card"><h2>Cargos vs pagos por mes <small>MXN</small></h2>
+      <div class="legend"><span><i style="background:var(--s1)"></i>Cargos (aportaciones)</span><span><i style="background:var(--s2)"></i>Pagos (retiros)</span></div>
+      <div class="chartbox sm"><canvas id="chFC"></canvas></div></div>
+    <div class="card"><h2>Detalle mensual</h2><div class="tbl" style="max-height:520px"><table id="tbF"></table></div></div>
+  </section>
+</div></main>
+<footer id="foot"></footer>
+
+<script>
+const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const st={tab:'compras',per:'MTD',tipo:'MP',prem:'',sub:'',q:'',act:'',sortD:{k:'act',d:-1},sortS:{k:'act',d:-1}};
+let D=null, charts={};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const usd=(v,dec=0)=>(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+const mxn=v=>usd(v,0)+' MXN';
+const pct=(a,b)=>b>0?(a-b)/b*100:null;
+const fp=p=>p===null?'<span class="pill">NUEVO</span>':`<span class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${Math.abs(p).toFixed(1)}%</span>`;
+const fpTxt=p=>p===null?'—':(p>=0?'+':'')+p.toFixed(1)+'%';
+const perLabel=yyyymm=>{const s=String(yyyymm);return MESL[+s.slice(4,6)-1]+' '+s.slice(0,4)};
+const mesCorto=yyyymm=>{const s=String(yyyymm);return MES[+s.slice(4,6)-1]+' '+s.slice(2,4)};
+
+async function cargar(f){
+  const url=f?`data/historial/${f}.json`:'data/latest.json';
+  D=await (await fetch(url+'?v='+Date.now())).json();
+  const subs=Object.keys(D.subterritorios).sort();
+  const ss=document.getElementById('selSub'); ss.innerHTML='<option value="">Todos los subterritorios</option>'+subs.map(s=>`<option>${s}</option>`).join('');
+  ss.value=st.sub;
+  const c=new Date(D.fecha_corte+'T12:00:00');
+  document.getElementById('subtitulo').textContent=`Corte ${D.tipo_corte==='cierre'?'de cierre de mes':'semanal'} · ${c.getDate()} de ${MESL[c.getMonth()]} ${c.getFullYear()} · actualizado ${D.generado}`;
+  document.getElementById('foot').textContent='Fuente: portal de distribuidores Hycite (distributors.hycite.com). Compras y ventas en USD; bonos y fondo en MXN.';
+  const av=document.getElementById('avisos');
+  av.innerHTML=(D.errores||[]).length?`<div class="warnbox"><b>Revisar:</b> ${D.errores.join(' · ')}</div>`:'';
+  render();
+}
+
+function periodoTxt(rep){
+  const r=D[rep][st.per]; const c=new Date(D.fecha_corte+'T12:00:00');
+  let mes, anio;
+  if(r.periodo && r.periodo!=='CURRENT'){mes=+String(r.periodo).slice(4,6)-1; anio=+String(r.periodo).slice(0,4);}
+  else{mes=c.getMonth(); anio=c.getFullYear();}
+  const hasta = (r.periodo && r.periodo!=='CURRENT') ? 'cierre' : `al ${c.getDate()} ${MES[mes].toLowerCase()}`;
+  if(st.per==='MTD') return {act:`${MESL[mes]} ${anio} (${hasta})`, ant:`${MESL[mes]} ${anio-1}`, a:anio};
+  return {act:`ene–${MES[mes].toLowerCase()} ${anio} (${hasta})`, ant:`ene–${MES[mes].toLowerCase()} ${anio-1}`, a:anio};
+}
+
+function filasCV(){
+  const rep=st.tab, r=D[rep][st.per];
+  return r.filas.map(f=>{
+    const d=D.distribuidores[f[0]]||{n:'?',s:''};
+    let act,ant;
+    if(rep==='compras'){act=st.tipo==='M'?f[1]:f[1]+f[2]; ant=st.tipo==='M'?f[4]:f[4]+f[5];}
+    else{act=f[1]; ant=f[2];}
+    const sub=d.s||'', prem=(D.subterritorios[sub]||{}).premier||'';
+    return {id:f[0],n:d.n,sub,prem,lv:d.lv||'',org:d.org,b:d.b,p:d.p,act,ant};
+  }).filter(x=>(!st.prem||x.prem===st.prem)&&(!st.sub||x.sub===st.sub));
+}
+
+// Grupo = distribuidor + descendientes (árbol del portal)
+function grupos(rows){
+  const all=filasTodos(); const kids={}; all.forEach(x=>{(kids[x.p]=kids[x.p]||[]).push(x)});
+  const memo={};
+  const g=id=>{if(memo[id])return memo[id]; const me=all.find(x=>x.id===id)||{act:0,ant:0}; let a=me.act,b=me.ant;(kids[id]||[]).forEach(k=>{const r=g(k.id);a+=r[0];b+=r[1]}); return memo[id]=[a,b]};
+  rows.forEach(x=>{const r=g(x.id); x.gact=r[0]; x.gant=r[1]});
+}
+function filasTodos(){const s=[st.prem,st.sub]; st.prem='';st.sub=''; const r=filasCV(); [st.prem,st.sub]=s; return r}
+
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.tab));
+  const cv=st.tab==='compras'||st.tab==='ventas';
+  document.getElementById('secCV').classList.toggle('hidden',!cv);
+  document.getElementById('secBonos').classList.toggle('hidden',st.tab!=='bonos');
+  document.getElementById('secFondo').classList.toggle('hidden',st.tab!=='fondo');
+  document.getElementById('segTipo').classList.toggle('hidden',st.tab!=='compras');
+  if(cv) renderCV(); else if(st.tab==='bonos') renderBonos(); else renderFondo();
+}
+
+function renderCV(){
+  const rows=filasCV(); const P=periodoTxt(st.tab);
+  const A=rows.reduce((s,x)=>s+x.act,0), B=rows.reduce((s,x)=>s+x.ant,0);
+  const vig=rows.filter(x=>!x.b), activos=vig.filter(x=>x.act>0).length;
+  const nombre=st.tab==='compras'?(st.tipo==='M'?'Compras (solo mercancía)':'Compras (mercancía + premiums)'):'Ventas (volumen)';
+  const p=pct(A,B);
+  document.getElementById('kpisCV').innerHTML=`
+    <div class="kpi"><div class="l">${nombre}</div><div class="v">${usd(A)}</div><div class="d">${P.act}</div></div>
+    <div class="kpi" style="border-left-color:#939393"><div class="l">Mismo periodo año anterior</div><div class="v">${usd(B)}</div><div class="d">${P.ant}</div></div>
+    <div class="kpi" style="border-left-color:${p!==null&&p>=0?'var(--up)':'var(--down)'}"><div class="l">Variación</div><div class="v ${p!==null&&p>=0?'up':'down'}">${fpTxt(p)}</div><div class="d">${(A-B>=0?'+':'')+usd(A-B)} USD</div></div>
+    <div class="kpi"><div class="l">Distribuidores con actividad</div><div class="v">${activos} / ${vig.length}</div><div class="d">vigentes en el reporte</div></div>
+    <div class="kpi"><div class="l">Promedio por activo</div><div class="v">${usd(activos?A/activos:0)}</div><div class="d">USD por distribuidor</div></div>`;
+  document.getElementById('lgAct').textContent=P.act; document.getElementById('lgAnt').textContent=P.ant;
+
+  // subterritorios
+  const subs={}; rows.forEach(x=>{const k=x.sub||'(sin asignar)'; const s=subs[k]=subs[k]||{sub:k,prem:x.prem,niv:(D.subterritorios[k]||{}).nivel||'',act:0,ant:0,a:0,n:0}; s.act+=x.act; s.ant+=x.ant; if(!x.b){s.n++; if(x.act>0)s.a++;}});
+  let sl=Object.values(subs).map(s=>({...s,p:pct(s.act,s.ant),dv:s.act-s.ant}));
+  const ks=st.sortS; sl.sort((a,b)=>((a[ks.k]??-1e18)>(b[ks.k]??-1e18)?1:-1)*ks.d);
+  const hS=[['sub','Subterritorio'],['prem','Premier'],['niv','Nivel'],['act','Actual','n'],['ant','Año ant.','n'],['p','Var %','n'],['dv','Var $','n'],['a','Activos','n']];
+  document.getElementById('tbSub').innerHTML='<thead><tr>'+hS.map(h=>`<th class="${h[2]||''}" data-k="${h[0]}">${h[1]}${ks.k===h[0]?(ks.d<0?' ↓':' ↑'):''}</th>`).join('')+'</tr></thead><tbody>'+
+    sl.map(s=>`<tr><td><b>${s.sub}</b></td><td>${s.prem}</td><td>${s.niv}</td><td class="n">${usd(s.act)}</td><td class="n mut">${usd(s.ant)}</td><td class="n">${fp(s.p)}</td><td class="n ${s.dv>=0?'up':'down'}">${usd(s.dv)}</td><td class="n">${s.a} / ${s.n}</td></tr>`).join('')+
+    `<tr><td><b>Total</b></td><td></td><td></td><td class="n"><b>${usd(A)}</b></td><td class="n mut"><b>${usd(B)}</b></td><td class="n">${fp(p)}</td><td class="n"><b>${usd(A-B)}</b></td><td class="n">${activos} / ${vig.length}</td></tr></tbody>`;
+  document.querySelectorAll('#tbSub th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; st.sortS={k,d:st.sortS.k===k?-st.sortS.d:-1}; renderCV()});
+
+  // chart
+  const cs=[...Object.values(subs)].sort((a,b)=>b.act-a.act);
+  drawBars('chSub',cs.map(s=>s.sub),[{label:P.act,data:cs.map(s=>s.act),c:'--s1'},{label:P.ant,data:cs.map(s=>s.ant),c:'--s2'}],true,v=>usd(v));
+
+  // distribuidores
+  grupos(rows);
+  let dl=rows.map(x=>({...x,pc:pct(x.act,x.ant),dv:x.act-x.ant}));
+  const q=st.q.toLowerCase();
+  if(q) dl=dl.filter(x=>x.n.toLowerCase().includes(q)||x.id.includes(q));
+  if(st.act==='act') dl=dl.filter(x=>x.act>0);
+  if(st.act==='sin') dl=dl.filter(x=>x.act<=0);
+  if(st.act==='nuevo') dl=dl.filter(x=>x.act>0&&x.ant<=0);
+  if(st.act==='cae') dl=dl.filter(x=>x.ant>0&&x.act<x.ant);
+  if(st.act==='crece') dl=dl.filter(x=>x.ant>0&&x.act>x.ant);
+  const kd=st.sortD; dl.sort((a,b)=>{const va=a[kd.k]??-1e18, vb=b[kd.k]??-1e18; return (typeof va==='string'?va.localeCompare(vb):(va-vb))*kd.d});
+  const hD=[['id','#'],['n','Distribuidor'],['sub','Subterritorio'],['lv','Nivel'],['act','Actual','n'],['ant','Año ant.','n'],['pc','Var %','n'],['dv','Var $','n'],['gact','Grupo actual','n'],['gant','Grupo año ant.','n']];
+  document.getElementById('tbDist').innerHTML='<thead><tr>'+hD.map(h=>`<th class="${h[2]||''}" data-k="${h[0]}">${h[1]}${kd.k===h[0]?(kd.d<0?' ↓':' ↑'):''}</th>`).join('')+'</tr></thead><tbody>'+
+    dl.map(x=>`<tr><td class="mut">${x.id}</td><td>${x.n}${x.b?'<span class="pill baja">BAJA</span>':''}</td><td>${x.sub}${x.org?'':'*'}</td><td>${x.lv}</td><td class="n">${usd(x.act)}</td><td class="n mut">${usd(x.ant)}</td><td class="n">${x.act<=0&&x.ant<=0?'<span class="mut">—</span>':fp(x.pc)}</td><td class="n ${x.dv>=0?'up':'down'}">${usd(x.dv)}</td><td class="n">${x.gact!==x.act?usd(x.gact):'<span class="mut">—</span>'}</td><td class="n mut">${x.gant!==x.ant?usd(x.gant):'—'}</td></tr>`).join('')+'</tbody>';
+  document.getElementById('cntDist').textContent=`${dl.length} de ${rows.length} · USD`;
+  document.querySelectorAll('#tbDist th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; st.sortD={k,d:st.sortD.k===k?-st.sortD.d:-1}; renderCV()});
+  document.getElementById('tSubChart').textContent=`${nombre} por subterritorio`;
+}
+
+function drawBars(id,labels,series,horizontal,fmt,stacked){
+  if(charts[id]) charts[id].destroy();
+  const ctx=document.getElementById(id);
+  charts[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:series.map(s=>({label:s.label,data:s.data,backgroundColor:css(s.c),borderRadius:4,borderSkipped:false,barPercentage:.82,categoryPercentage:.72}))},
+    options:{indexAxis:horizontal?'y':'x',maintainAspectRatio:false,animation:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},
+      scales:(()=>{const val={beginAtZero:true,grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>fmtCorto(v)}};
+              const cat={grid:{color:'transparent'},ticks:{color:css('--ink2'),autoSkip:false}};
+              return horizontal?{x:val,y:cat}:{x:cat,y:val}})()}});
+}
+function fmtCorto(v){const a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a)}
+
+function renderBonos(){
+  const b=[...D.bonos].sort((x,y)=>y.periodo-x.periodo);
+  const ult=b[0], est=(D.bono_estimado||[])[0];
+  const yr=+String(ult.periodo).slice(0,4), mUlt=+String(ult.periodo).slice(4,6);
+  const acum=(y)=>b.filter(x=>+String(x.periodo).slice(0,4)===y&&+String(x.periodo).slice(4,6)<=mUlt).reduce((s,x)=>s+x.total,0);
+  const a1=acum(yr), a0=acum(yr-1), p=pct(a1,a0);
+  const mismoMesAnt=b.find(x=>x.periodo===ult.periodo-100);
+  document.getElementById('kpisB').innerHTML=`
+    <div class="kpi"><div class="l">Último bono pagado</div><div class="v">${mxn(ult.total)}</div><div class="d">${perLabel(ult.periodo)} · ${usd(ult.total_usd)} USD${mismoMesAnt?` · ${fpTxt(pct(ult.total,mismoMesAnt.total))} vs ${perLabel(mismoMesAnt.periodo)}`:''}</div></div>
+    ${est?`<div class="kpi" style="border-left-color:var(--warn)"><div class="l">Estimado mes en curso</div><div class="v">${mxn(est.total)}</div><div class="d">${perLabel(est.periodo)} · liderazgo ${mxn(est.liderazgo)} · reclutador ${mxn(est.reclutador)}</div></div>`:''}
+    <div class="kpi"><div class="l">Acumulado ${yr} (ene–${MES[mUlt-1].toLowerCase()})</div><div class="v">${mxn(a1)}</div><div class="d">promedio ${mxn(a1/mUlt)} por mes</div></div>
+    <div class="kpi" style="border-left-color:${p>=0?'var(--up)':'var(--down)'}"><div class="l">vs mismo periodo ${yr-1}</div><div class="v ${p>=0?'up':'down'}">${fpTxt(p)}</div><div class="d">${mxn(a0)} en ${yr-1}</div></div>`;
+  const ser=(y)=>MES.map((m,i)=>{const r=b.find(x=>x.periodo===y*100+i+1);return r?r.total:null});
+  document.getElementById('lgB').innerHTML=`<span><i style="background:var(--s1)"></i>${yr}</span><span><i style="background:var(--s2)"></i>${yr-1}</span>`;
+  drawBars('chB',MES,[{label:String(yr),data:ser(yr),c:'--s1'},{label:String(yr-1),data:ser(yr-1),c:'--s2'}],false,v=>mxn(v));
+  document.getElementById('tbB').innerHTML='<thead><tr><th>Mes</th><th class="n">Overrides</th><th class="n">Ajuste reserva</th><th class="n">Total pagado</th><th class="n">USD</th><th class="n">TC</th><th class="n">vs año ant.</th><th>Procesado</th></tr></thead><tbody>'+
+    b.map(x=>{const pa=b.find(y=>y.periodo===x.periodo-100);return `<tr><td><b>${perLabel(x.periodo)}</b></td><td class="n">${mxn(x.overrides)}</td><td class="n">${x.ajuste?mxn(x.ajuste):'<span class="mut">—</span>'}</td><td class="n"><b>${mxn(x.total)}</b></td><td class="n mut">${usd(x.total_usd)}</td><td class="n mut">${x.tc?(+x.tc).toFixed(2):''}</td><td class="n">${pa?fp(pct(x.total,pa.total)):'<span class="mut">—</span>'}</td><td class="mut">${x.fecha_proceso||''}</td></tr>`}).join('')+'</tbody>';
+}
+
+function renderFondo(){
+  const f=[...D.fondo].sort((x,y)=>y.periodo-x.periodo);
+  const u=f[0], yr=+String(u.periodo).slice(0,4);
+  const anio=f.filter(x=>+String(x.periodo).slice(0,4)===yr);
+  const cargos=anio.reduce((s,x)=>s+x.cargos,0), pagos=anio.reduce((s,x)=>s+x.pagos,0);
+  document.getElementById('kpisF').innerHTML=`
+    <div class="kpi"><div class="l">Saldo actual</div><div class="v">${mxn(u.saldo)}</div><div class="d">${perLabel(u.periodo)} · ${usd(u.saldo_usd)} USD</div></div>
+    <div class="kpi"><div class="l">Cargos del mes</div><div class="v">${mxn(u.cargos)}</div><div class="d">${perLabel(u.periodo)}</div></div>
+    <div class="kpi" style="border-left-color:var(--s2)"><div class="l">Pagos del mes</div><div class="v">${mxn(Math.abs(u.pagos))}</div><div class="d">${perLabel(u.periodo)}</div></div>
+    <div class="kpi"><div class="l">Acumulado ${yr}</div><div class="v">${mxn(cargos)}</div><div class="d">cargos · pagos ${mxn(Math.abs(pagos))}</div></div>`;
+  const asc=[...f].reverse().slice(-24);
+  if(charts.chFS) charts.chFS.destroy();
+  charts.chFS=new Chart(document.getElementById('chFS'),{type:'line',data:{labels:asc.map(x=>mesCorto(x.periodo)),datasets:[{label:'Saldo',data:asc.map(x=>x.saldo),borderColor:css('--s1'),backgroundColor:css('--s1'),borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:0}]},
+    options:{maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Saldo: '+mxn(c.raw)}}},
+      scales:{x:{grid:{color:'transparent'},ticks:{color:css('--ink2')}},y:{grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>fmtCorto(v)}}}}});
+  drawBars('chFC',asc.map(x=>mesCorto(x.periodo)),[{label:'Cargos',data:asc.map(x=>x.cargos),c:'--s1'},{label:'Pagos',data:asc.map(x=>Math.abs(x.pagos)),c:'--s2'}],false,v=>mxn(v));
+  document.getElementById('tbF').innerHTML='<thead><tr><th>Periodo</th><th class="n">Cargos</th><th class="n">Pagos</th><th class="n">Saldo final</th><th class="n">Saldo USD</th></tr></thead><tbody>'+
+    f.map(x=>`<tr><td><b>${perLabel(x.periodo)}</b></td><td class="n">${mxn(x.cargos)}</td><td class="n down">${mxn(x.pagos)}</td><td class="n"><b>${mxn(x.saldo)}</b></td><td class="n mut">${usd(x.saldo_usd)}</td></tr>`).join('')+'</tbody>';
+}
+
+// eventos
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t; render()});
+const seg=(id,key)=>document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{st[key]=b.dataset.v; document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle('on',x===b)); render()});
+seg('segPer','per'); seg('segTipo','tipo');
+document.getElementById('selPrem').onchange=e=>{st.prem=e.target.value; render()};
+document.getElementById('selSub').onchange=e=>{st.sub=e.target.value; render()};
+document.getElementById('q').oninput=e=>{st.q=e.target.value; renderCV()};
+document.getElementById('selAct').onchange=e=>{st.act=e.target.value; renderCV()};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>render());
+
+(async()=>{
+  try{
+    const idx=await (await fetch('data/historial/index.json?v='+Date.now())).json();
+    const sh=document.getElementById('selHist');
+    sh.innerHTML=idx.map((x,i)=>`<option value="${i?x.fecha:''}">${x.fecha}${x.tipo==='cierre'?' (cierre)':''}${i?'':' · último'}</option>`).join('');
+    sh.onchange=e=>cargar(e.target.value);
+  }catch(e){}
+  cargar('');
+})();
+</script>
+</body>
+</html>
