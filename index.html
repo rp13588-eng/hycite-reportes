@@ -3,326 +3,485 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reportes Hycite CHASEP</title>
+<title>Mando CHASEP 13588</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --navy:#064180; --blue:#006BB5; --bg:#F4F6F9; --card:#FFFFFF; --ink:#1A1A1A; --ink2:#5B6470; --line:#E3E8EE;
-  --soft:#E8F1FA; --up:#1E7D45; --down:#C0392B; --warn:#9A7B0A;
-  --s1:#2a78d6; --s2:#eb6834; --grid:#E8ECF0;
+  --navy:#064180; --navy2:#0A3466; --blue:#006BB5; --sky:#E8F1FA;
+  --paper:#F2F5F9; --surface:#FFFFFF; --ink:#1A1A1A; --ink2:#55606E; --line:#DCE3EC; --line2:#EEF2F6;
+  --up:#1E7D45; --down:#C0392B; --warn:#8A6A00; --warnbg:#FFF5D1;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6;
+  --grid:#E6EBF1; --font:'Archivo',system-ui,-apple-system,sans-serif;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0F141B; --card:#18202B; --ink:#E8ECF0; --ink2:#A3AEBB; --line:#273242; --soft:#1E2A3A;
-    --up:#4CC07F; --down:#F07065; --warn:#E3C04A; --s1:#3987e5; --s2:#d95926; --grid:#273242;
-  }
-}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0E141C; --surface:#151D28; --blue:#6AAEF0; --ink:#E9EEF4; --ink2:#9FAABA; --line:#263244; --line2:#1B2533; --sky:#18263A;
+  --up:#4CC07F; --down:#F2786D; --warn:#E8C55A; --warnbg:#2A2410;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --grid:#223044;
+}}
 :root[data-theme="dark"]{
-  --bg:#0F141B; --card:#18202B; --ink:#E8ECF0; --ink2:#A3AEBB; --line:#273242; --soft:#1E2A3A;
-  --up:#4CC07F; --down:#F07065; --warn:#E3C04A; --s1:#3987e5; --s2:#d95926; --grid:#273242;
+  --paper:#0E141C; --surface:#151D28; --blue:#6AAEF0; --ink:#E9EEF4; --ink2:#9FAABA; --line:#263244; --line2:#1B2533; --sky:#18263A;
+  --up:#4CC07F; --down:#F2786D; --warn:#E8C55A; --warnbg:#2A2410;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --grid:#223044;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-header{background:var(--navy);color:#fff;padding:18px 16px 0}
-.wrap{max-width:1200px;margin:0 auto}
-.top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
-h1{font-size:20px;margin:0;letter-spacing:.2px}
-.sub{color:#E8ECF0;font-size:13px;margin-top:2px}
-.hist{display:flex;gap:8px;align-items:center;font-size:13px;color:#E8ECF0}
-.hist select{background:#0b356a;color:#fff;border:1px solid #2c5f9e;border-radius:8px;padding:6px 8px;font-size:13px}
-nav{display:flex;gap:4px;margin-top:14px;overflow-x:auto}
-nav button{background:transparent;border:0;color:#E8ECF0;padding:10px 14px;font-size:14px;font-weight:600;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
-nav button.on{background:var(--bg);color:var(--navy)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav button.on{color:#fff}}
-main{padding:16px}
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
-.seg button{border:0;background:transparent;color:var(--ink2);padding:7px 12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
-.seg button.on{background:var(--navy);color:#fff}
-select.f,input.f{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
-input.f{min-width:200px;flex:1;max-width:320px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;border-left:4px solid var(--blue)}
-.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink2);font-weight:600}
-.kpi .v{font-size:24px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
-.kpi .d{font-size:12px;color:var(--ink2);margin-top:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-.card h2{font-size:15px;margin:0 0 10px;color:var(--ink)}
-.card h2 small{font-weight:400;color:var(--ink2);font-size:12px;margin-left:6px}
-.chartbox{position:relative;height:360px}
-.chartbox.sm{height:280px}
-.tbl{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
-th{position:sticky;top:0;background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600;white-space:nowrap;cursor:pointer;user-select:none}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 var(--font);font-variant-numeric:tabular-nums}
+a{color:var(--blue)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* Banda superior */
+.band{background:var(--navy);color:#fff}
+.band .top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0 6px;flex-wrap:wrap}
+.mark{font-stretch:75%;font-weight:800;font-size:22px;letter-spacing:.5px;line-height:1}
+.mark span{font-weight:500;opacity:.8;margin-left:8px;font-stretch:100%;font-size:14px;letter-spacing:0}
+.corte{display:flex;align-items:center;gap:8px;font-size:13px;color:#D6E2F0}
+.corte select{background:var(--navy2);color:#fff;border:1px solid #2D5B92;border-radius:8px;padding:6px 8px}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin-top:8px}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:0;color:#C9D8EA;padding:10px 14px 12px;font-weight:600;font-size:15px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav button[aria-selected="true"]{color:#fff;border-bottom-color:#fff}
+
+/* Héroe */
+.hero{background:var(--navy);color:#fff;padding:18px 0 26px;border-top:1px solid #1B528F}
+.hero .num{font-stretch:62%;font-weight:800;font-size:clamp(56px,11vw,104px);line-height:.92;letter-spacing:-1px}
+.hero .num small{font-size:.32em;font-weight:600;font-stretch:100%;letter-spacing:0;margin-left:8px;opacity:.85}
+.hero .frase{font-size:clamp(17px,2.2vw,21px);max-width:60ch;margin:10px 0 0;color:#E4ECF6}
+.hero .frase b{color:#fff}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:.9em}
+.chip.up{background:#E3F4EA;color:#14593A}.chip.down{background:#FBE5E2;color:#8E2418}
+.strip{display:flex;flex-wrap:wrap;gap:0;margin-top:18px;border-top:1px solid #2A5E99}
+.strip div{padding:12px 22px 0 0;margin-right:22px;border-right:1px solid #2A5E99;min-width:120px}
+.strip div:last-child{border-right:0}
+.strip .v{font-size:22px;font-weight:700;font-stretch:85%}
+.strip .l{font-size:13px;color:#BFD0E4}
+
+/* Filtros */
+.filters{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:10px 0}
+.filters .wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:2px}
+.seg button{border:0;background:none;padding:6px 11px;border-radius:8px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.f{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:14px;max-width:210px}
+.limpiar{border:0;background:none;color:var(--blue);font-weight:600;cursor:pointer;font-size:14px}
+
+/* Secciones */
+section.blk{padding:26px 0 6px}
+h2{font-size:22px;font-stretch:85%;font-weight:750;margin:0 0 4px;color:var(--ink)}
+.sub{color:var(--ink2);font-size:14px;margin:0 0 14px;max-width:75ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.chart{position:relative;height:380px}.chart.sm{height:260px}.chart.md{height:320px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* Tablas */
+.tbl{overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);max-height:620px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{position:sticky;top:0;background:var(--navy);color:#fff;text-align:left;font-weight:600;padding:9px 10px;white-space:nowrap;cursor:pointer;user-select:none;z-index:1}
 th.n,td.n{text-align:right}
-td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-tr:nth-child(even) td{background:var(--soft)}
-.up{color:var(--up);font-weight:600}.down{color:var(--down);font-weight:600}.mut{color:var(--ink2)}
-.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;color:#fff;background:var(--blue);margin-left:6px}
-.pill.baja{background:#939393}
-.note{font-size:12px;color:var(--ink2);margin:6px 0 0}
-.warnbox{background:#FFF6D6;color:#5c4700;border:1px solid #E9D48A;border-radius:10px;padding:8px 12px;font-size:12px;margin-bottom:12px}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--ink2);margin-bottom:8px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.hidden{display:none}
-.count{font-size:12px;color:var(--ink2)}
-footer{color:var(--ink2);font-size:12px;text-align:center;padding:10px 16px 30px}
-@media (max-width:600px){.kpi .v{font-size:20px}.chartbox{height:300px}h1{font-size:18px}}
+td{padding:8px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
+tbody tr:hover td{background:var(--sky)}
+tr.tot td{font-weight:700;background:var(--sky);border-top:2px solid var(--line)}
+.mut{color:var(--ink2)}
+.up{color:var(--up)}.down{color:var(--down)}
+.bar{display:inline-block;height:8px;border-radius:4px;background:var(--s1);vertical-align:middle;margin-left:8px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:6px;border:1px solid}
+.tag.baja{color:var(--ink2);border-color:var(--line)}
+.tag.nuevo{color:var(--blue);border-color:var(--blue)}
+.tag.nv{color:var(--ink2);border-color:var(--line);font-weight:600}
+.aviso{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 14px;font-size:14px;margin:14px 0 0}
+.aviso b{color:inherit}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.count{font-size:13px;color:var(--ink2)}
+
+/* Red */
+details{border-left:2px solid var(--line);margin-left:6px;padding-left:12px}
+details>summary{cursor:pointer;list-style:none;padding:6px 0;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:'+';display:inline-block;width:14px;color:var(--blue);font-weight:700}
+details[open]>summary::before{content:'–'}
+.node .nm{font-weight:650}
+.node .meta{color:var(--ink2);font-size:13px}
+.node .val{margin-left:auto;font-weight:650}
+.leaf{display:flex;gap:10px;padding:4px 0 4px 26px;font-size:14px;border-bottom:1px dashed var(--line2);flex-wrap:wrap}
+.leaf .val{margin-left:auto}
+.lvl0>summary .nm{font-size:19px;font-stretch:85%}
+.lvl1>summary .nm{font-size:17px}
+footer{color:var(--ink2);font-size:13px;padding:30px 0 40px}
+.hidden{display:none!important}
+@media (max-width:600px){.filters{position:static}.strip{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}.strip div{min-width:0;margin-right:0;padding-right:0;border-right:0}.strip .v{font-size:19px}.chart{height:420px}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
+<div class="band"><div class="wrap">
   <div class="top">
-    <div><h1>Reportes Hycite · CHASEP 13588</h1><div class="sub" id="subtitulo">Cargando…</div></div>
-    <label class="hist">Corte <select id="selHist"></select></label>
+    <div class="mark">CHASEP 13588<span>Mando comercial</span></div>
+    <label class="corte">Corte <select id="selHist" aria-label="Elegir corte"></select></label>
   </div>
-  <nav id="tabs">
-    <button data-t="compras" class="on">Compras</button>
-    <button data-t="ventas">Ventas</button>
-    <button data-t="bonos">Bonos mensuales</button>
-    <button data-t="fondo">Fondo Network Leader</button>
+  <nav role="tablist" id="tabs">
+    <button role="tab" data-t="compras" aria-selected="true">Compras</button>
+    <button role="tab" data-t="ventas" aria-selected="false">Ventas</button>
+    <button role="tab" data-t="bonos" aria-selected="false">Bonos</button>
+    <button role="tab" data-t="fondo" aria-selected="false">Fondo Network Leader</button>
+    <button role="tab" data-t="red" aria-selected="false">Mi red</button>
   </nav>
-</div></header>
+</div></div>
+<div class="hero"><div class="wrap" id="hero"></div></div>
 
-<main><div class="wrap">
+<div class="filters" id="filtros"><div class="wrap">
+  <div class="seg" id="segPer" role="group" aria-label="Periodo"><button data-v="MTD" aria-pressed="true">Mes a la fecha</button><button data-v="YTD" aria-pressed="false">Año a la fecha</button></div>
+  <div class="seg" id="segTipo" role="group" aria-label="Tipo de compra"><button data-v="MP" aria-pressed="true">Mercancía + premiums</button><button data-v="M" aria-pressed="false">Solo mercancía</button></div>
+  <select class="f" id="fPrem" aria-label="Premier"><option value="">CHASEP + MEJAB</option><option value="CHASEP">Solo CHASEP</option><option value="MEJAB">Solo MEJAB</option></select>
+  <select class="f" id="fSub" aria-label="Subterritorio"></select>
+  <select class="f" id="fSuc" aria-label="Sucursal"></select>
+  <select class="f" id="fComp" aria-label="Compañía"></select>
+  <button class="limpiar" id="limpiar">Quitar filtros</button>
+</div></div>
+
+<main class="wrap">
   <div id="avisos"></div>
 
-  <!-- COMPRAS / VENTAS -->
-  <section id="secCV">
-    <div class="controls">
-      <div class="seg" id="segPer"><button data-v="MTD" class="on">Mes a la fecha</button><button data-v="YTD">Año a la fecha</button></div>
-      <div class="seg" id="segTipo"><button data-v="MP" class="on">Mercancía + premiums</button><button data-v="M">Solo mercancía</button></div>
-      <select class="f" id="selPrem"><option value="">Todos los premiers</option><option>CHASEP</option><option>MEJAB</option></select>
-      <select class="f" id="selSub"><option value="">Todos los subterritorios</option></select>
-    </div>
-    <div class="kpis" id="kpisCV"></div>
-    <div class="card">
-      <h2 id="tSubChart">Por subterritorio</h2>
-      <div class="legend"><span><i style="background:var(--s1)"></i><b id="lgAct">Actual</b></span><span><i style="background:var(--s2)"></i><b id="lgAnt">Año anterior</b></span></div>
-      <div class="chartbox"><canvas id="chSub"></canvas></div>
-    </div>
-    <div class="card">
-      <h2>Subterritorios <small>USD · compras/ventas personales de cada distribuidor sumadas por subterritorio</small></h2>
-      <div class="tbl"><table id="tbSub"></table></div>
-    </div>
-    <div class="card">
-      <h2>Distribuidores <small id="cntDist"></small></h2>
-      <div class="controls" style="margin-bottom:8px">
-        <input class="f" id="q" placeholder="Buscar nombre o número…">
-        <select class="f" id="selAct"><option value="">Todos</option><option value="act">Con actividad</option><option value="sin">Sin actividad</option><option value="nuevo">Nuevos vs año ant.</option><option value="cae">En caída</option><option value="crece">En crecimiento</option></select>
+  <div id="vCV">
+    <section class="blk">
+      <h2 id="tSub">Subterritorios</h2>
+      <p class="sub">Suma de lo que compra o vende cada distribuidor de tu hoja en su subterritorio. Bajas cuentan en el año anterior.</p>
+      <div class="grid2">
+        <div class="panel"><div class="legend" id="lgSub"></div><div class="chart"><canvas id="chSub" role="img" aria-label="Gráfica por subterritorio"></canvas></div></div>
+        <div class="tbl" style="max-height:none"><table id="tbSub"></table></div>
       </div>
-      <div class="tbl" style="max-height:560px"><table id="tbDist"></table></div>
-      <p class="note">“Grupo” = compras/ventas del distribuidor más toda su línea descendente en el portal. Subterritorio según organigrama; los distribuidores nuevos que no están en el organigrama se asignan por su línea de patrocinio (marcados con *).</p>
-    </div>
-  </section>
+    </section>
+    <section class="blk">
+      <h2>Sucursales</h2>
+      <p class="sub">Según la sucursal asignada en tu hoja.</p>
+      <div class="tbl" style="max-height:none"><table id="tbSuc"></table></div>
+    </section>
+    <section class="blk">
+      <h2>Compañías</h2>
+      <p class="sub">El líder y todos los que le cuentan según la columna COMPAÑÍA de tu hoja.</p>
+      <div class="tbl"><table id="tbComp"></table></div>
+    </section>
+    <section class="blk">
+      <h2>Distribuidores</h2>
+      <div class="toolbar">
+        <input class="f" id="q" placeholder="Buscar nombre o número" style="max-width:260px;flex:1">
+        <select class="f" id="fAct" aria-label="Actividad"><option value="">Todos</option><option value="act">Con actividad</option><option value="sin">Sin actividad</option><option value="nuevo">Nuevos vs año pasado</option><option value="cae">Van abajo</option><option value="crece">Van arriba</option></select>
+        <span class="count" id="cntDist"></span>
+      </div>
+      <div class="tbl"><table id="tbDist"></table></div>
+    </section>
+  </div>
 
-  <!-- BONOS -->
-  <section id="secBonos" class="hidden">
-    <div class="kpis" id="kpisB"></div>
-    <div class="card">
-      <h2>Bonos mensuales por mes <small>MXN · total pagado</small></h2>
-      <div class="legend" id="lgB"></div>
-      <div class="chartbox"><canvas id="chB"></canvas></div>
-    </div>
-    <div class="card"><h2>Detalle mensual <small>MXN (USD al tipo de cambio del portal)</small></h2><div class="tbl" style="max-height:520px"><table id="tbB"></table></div></div>
-  </section>
+  <div id="vBonos" class="hidden">
+    <section class="blk">
+      <h2>Bonos por concepto</h2>
+      <p class="sub">Total facturado por mes (MXN con IVA), según tu estado de cuenta de bonos del portal.</p>
+      <div class="panel"><div class="legend" id="lgB"></div><div class="chart md"><canvas id="chB" role="img" aria-label="Bonos por concepto"></canvas></div></div>
+    </section>
+    <section class="blk">
+      <h2>Comparativo enero a <span id="mesCorte"></span></h2>
+      <div class="tbl" style="max-height:none"><table id="tbConc"></table></div>
+    </section>
+    <section class="blk">
+      <h2>Quién genera tus bonos</h2>
+      <p class="sub">Aportación de cada distribuidor a tu bono del mes. Los negativos son los descuentos que se restan por tus Royal/Blue o devoluciones.</p>
+      <div class="toolbar">
+        <select class="f" id="bMes" aria-label="Mes"></select>
+        <div class="seg" id="bAgr" role="group" aria-label="Agrupar"><button data-v="d" aria-pressed="true">Distribuidor</button><button data-v="c" aria-pressed="false">Compañía</button><button data-v="s" aria-pressed="false">Subterritorio</button></div>
+      </div>
+      <div class="tbl"><table id="tbBD"></table></div>
+    </section>
+    <section class="blk">
+      <h2>Pagos mes a mes</h2>
+      <div class="tbl"><table id="tbB"></table></div>
+    </section>
+  </div>
 
-  <!-- FONDO -->
-  <section id="secFondo" class="hidden">
-    <div class="kpis" id="kpisF"></div>
-    <div class="card"><h2>Saldo del fondo al cierre de cada mes <small>MXN</small></h2><div class="chartbox sm"><canvas id="chFS"></canvas></div></div>
-    <div class="card"><h2>Cargos vs pagos por mes <small>MXN</small></h2>
-      <div class="legend"><span><i style="background:var(--s1)"></i>Cargos (aportaciones)</span><span><i style="background:var(--s2)"></i>Pagos (retiros)</span></div>
-      <div class="chartbox sm"><canvas id="chFC"></canvas></div></div>
-    <div class="card"><h2>Detalle mensual</h2><div class="tbl" style="max-height:520px"><table id="tbF"></table></div></div>
-  </section>
-</div></main>
-<footer id="foot"></footer>
+  <div id="vFondo" class="hidden">
+    <section class="blk">
+      <h2>Saldo al cierre de cada mes</h2>
+      <p class="sub">Entra 1.75% de cada orden de tu territorio; sale con tus reembolsos de gastos (facturas). Las órdenes canceladas restan su 1.75%.</p>
+      <div class="panel"><div class="chart sm"><canvas id="chFS" role="img" aria-label="Saldo del fondo"></canvas></div></div>
+    </section>
+    <section class="blk">
+      <h2>Aportaciones y retiros</h2>
+      <div class="panel"><div class="legend"><span><i style="background:var(--s1)"></i>Aportaciones (1.75%)</span><span><i style="background:var(--s2)"></i>Retiros y cancelaciones</span></div><div class="chart sm"><canvas id="chFC" role="img" aria-label="Aportaciones y retiros"></canvas></div></div>
+    </section>
+    <section class="blk">
+      <h2>Reembolsos cobrados</h2>
+      <div class="tbl"><table id="tbFR"></table></div>
+    </section>
+    <section class="blk">
+      <h2>Estado de cuenta del fondo</h2>
+      <div class="tbl"><table id="tbF"></table></div>
+    </section>
+  </div>
+
+  <div id="vRed" class="hidden">
+    <section class="blk">
+      <div class="toolbar"><div class="seg" id="segRed" role="group" aria-label="Vista"><button data-v="hoja" aria-pressed="true">Por tu hoja</button><button data-v="portal" aria-pressed="false">Árbol del portal</button></div>
+      <span class="count" id="redNota"></span></div>
+      <div id="arbol" class="panel"></div>
+    </section>
+    <section class="blk" id="pendientes"></section>
+  </div>
+</main>
+<footer class="wrap" id="foot"></footer>
 
 <script>
 const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const st={tab:'compras',per:'MTD',tipo:'MP',prem:'',sub:'',q:'',act:'',sortD:{k:'act',d:-1},sortS:{k:'act',d:-1}};
-let D=null, charts={};
+const CONC={'Purchase Discount':['Purchase Discount','--s1'],'Elite Bonus':['Elite Bonus','--s2'],'Leadership Bonus':['Leadership Bonus','--s3'],'Finance Charge Rebate':['Finance Charge Rebate','--s4'],'Price Level Rebate':['Price Level Rebate','--s5'],'Territory Director Premium Rebate':['TD Premium Rebate','--s6'],'Recruiter Bonus':['Recruiter Bonus','--s7']};
+const st={tab:'compras',per:'MTD',tipo:'MP',prem:'',sub:'',suc:'',comp:'',q:'',act:'',red:'hoja',bMes:'',bAgr:'d',sD:{k:'act',d:-1},sS:{k:'act',d:-1},sC:{k:'act',d:-1},sB:{k:'tot',d:-1}};
+let D=null,BD=null,charts={};
+const $=id=>document.getElementById(id);
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const usd=(v,dec=0)=>(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});
-const mxn=v=>usd(v,0)+' MXN';
 const pct=(a,b)=>b>0?(a-b)/b*100:null;
-const fp=p=>p===null?'<span class="pill">NUEVO</span>':`<span class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${Math.abs(p).toFixed(1)}%</span>`;
-const fpTxt=p=>p===null?'—':(p>=0?'+':'')+p.toFixed(1)+'%';
-const perLabel=yyyymm=>{const s=String(yyyymm);return MESL[+s.slice(4,6)-1]+' '+s.slice(0,4)};
-const mesCorto=yyyymm=>{const s=String(yyyymm);return MES[+s.slice(4,6)-1]+' '+s.slice(2,4)};
+const fp=p=>p===null?'<span class="tag nuevo">Nuevo</span>':`<span class="${p>=0?'up':'down'}">${p>=0?'+':''}${p.toFixed(1)}%</span>`;
+const fpt=p=>p===null?'—':(p>=0?'+':'')+p.toFixed(1)+'%';
+const perL=p=>{p=String(p);return MESL[+p.slice(4,6)-1]+' '+p.slice(0,4)};
+const perC=p=>{p=String(p);return MES[+p.slice(4,6)-1]+' '+p.slice(2,4)};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap=s=>String(s||'').toLowerCase().replace(/(^|[\s&(])([a-záéíóúñ])/g,(m,a,b)=>a+b.toUpperCase());
 
 async function cargar(f){
-  const url=f?`data/historial/${f}.json`:'data/latest.json';
-  D=await (await fetch(url+'?v='+Date.now())).json();
-  const subs=Object.keys(D.subterritorios).sort();
-  const ss=document.getElementById('selSub'); ss.innerHTML='<option value="">Todos los subterritorios</option>'+subs.map(s=>`<option>${s}</option>`).join('');
-  ss.value=st.sub;
-  const c=new Date(D.fecha_corte+'T12:00:00');
-  document.getElementById('subtitulo').textContent=`Corte ${D.tipo_corte==='cierre'?'de cierre de mes':'semanal'} · ${c.getDate()} de ${MESL[c.getMonth()]} ${c.getFullYear()} · actualizado ${D.generado}`;
-  document.getElementById('foot').textContent='Fuente: portal de distribuidores Hycite (distributors.hycite.com). Compras y ventas en USD; bonos y fondo en MXN.';
-  const av=document.getElementById('avisos');
-  av.innerHTML=(D.errores||[]).length?`<div class="warnbox"><b>Revisar:</b> ${D.errores.join(' · ')}</div>`:'';
+  D=await (await fetch((f?`data/historial/${f}.json`:'data/latest.json')+'?v='+Date.now())).json();
+  if(!BD){try{BD=await (await fetch('data/bonos_detalle.json?v='+Date.now())).json()}catch(e){BD={}}}
+  const subs=Object.keys(D.subterritorios).sort(), sucs=[...new Set(Object.values(D.distribuidores).map(d=>d.suc).filter(Boolean))].sort();
+  $('fSub').innerHTML='<option value="">Todos los subterritorios</option>'+subs.map(s=>`<option>${s}</option>`).join('');
+  $('fSuc').innerHTML='<option value="">Todas las sucursales</option>'+sucs.map(s=>`<option>${cap(s)}</option>`).join('');
+  const comps=Object.values(D.companias).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  $('fComp').innerHTML='<option value="">Todas las compañías</option>'+comps.map(c=>`<option value="${c.lider}">${esc(cap(c.nombre))}</option>`).join('');
+  $('fSub').value=st.sub; $('fSuc').value=st.suc?cap(st.suc):''; $('fComp').value=st.comp;
+  const meses=Object.keys(BD).sort().reverse(); $('bMes').innerHTML=meses.map(m=>`<option value="${m}">${cap(perL(m))}</option>`).join(''); if(!st.bMes)st.bMes=meses[0]||''; $('bMes').value=st.bMes;
+  $('avisos').innerHTML=(D.errores||[]).length?`<div class="aviso"><b>Revisar:</b> ${D.errores.map(esc).join(' · ')}</div>`:'';
+  $('foot').innerHTML=`Fuente: portal de distribuidores Hycite y tu hoja <a href="${D.fuente_estructura}" target="_blank" rel="noopener">DISTRUBUCIONES CHASEP & MEJAB</a>. Compras y ventas en USD; bonos y fondo en MXN. Actualizado ${D.generado}.`;
   render();
 }
 
-function periodoTxt(rep){
-  const r=D[rep][st.per]; const c=new Date(D.fecha_corte+'T12:00:00');
-  let mes, anio;
-  if(r.periodo && r.periodo!=='CURRENT'){mes=+String(r.periodo).slice(4,6)-1; anio=+String(r.periodo).slice(0,4);}
-  else{mes=c.getMonth(); anio=c.getFullYear();}
-  const hasta = (r.periodo && r.periodo!=='CURRENT') ? 'cierre' : `al ${c.getDate()} ${MES[mes].toLowerCase()}`;
-  if(st.per==='MTD') return {act:`${MESL[mes]} ${anio} (${hasta})`, ant:`${MESL[mes]} ${anio-1}`, a:anio};
-  return {act:`ene–${MES[mes].toLowerCase()} ${anio} (${hasta})`, ant:`ene–${MES[mes].toLowerCase()} ${anio-1}`, a:anio};
+function periodo(rep){
+  const r=D[rep][st.per], c=new Date(D.fecha_corte+'T12:00:00');
+  let m=c.getMonth(), y=c.getFullYear(), cierre=false;
+  if(r.periodo&&r.periodo!=='CURRENT'){m=+String(r.periodo).slice(4,6)-1;y=+String(r.periodo).slice(0,4);cierre=true}
+  const hasta=cierre?'cierre':`al ${c.getDate()} de ${MESL[m]}`;
+  return st.per==='MTD'?{act:`${MESL[m]} ${y}`,ant:`${MESL[m]} ${y-1}`,hasta,m,y}:{act:`enero a ${MESL[m]} ${y}`,ant:`enero a ${MESL[m]} ${y-1}`,hasta,m,y};
 }
-
-function filasCV(){
+function filas(){
   const rep=st.tab, r=D[rep][st.per];
-  return r.filas.map(f=>{
-    const d=D.distribuidores[f[0]]||{n:'?',s:''};
-    let act,ant;
-    if(rep==='compras'){act=st.tipo==='M'?f[1]:f[1]+f[2]; ant=st.tipo==='M'?f[4]:f[4]+f[5];}
-    else{act=f[1]; ant=f[2];}
-    const sub=d.s||'', prem=(D.subterritorios[sub]||{}).premier||'';
-    return {id:f[0],n:d.n,sub,prem,lv:d.lv||'',org:d.org,b:d.b,p:d.p,act,ant};
-  }).filter(x=>(!st.prem||x.prem===st.prem)&&(!st.sub||x.sub===st.sub));
+  return r.filas.map(f=>{const d=D.distribuidores[f[0]]||{};let act,ant;
+    if(rep==='compras'){act=st.tipo==='M'?f[1]:f[1]+f[2];ant=st.tipo==='M'?f[4]:f[4]+f[5]}else{act=f[1];ant=f[2]}
+    return {id:f[0],n:d.n||d.pn||'?',s:d.s||'',pr:d.pr||'',c:d.c||'',nv:d.nv||'',suc:d.suc||'',est:d.est||'',lv:d.lv||'',act,ant}});
 }
-
-// Grupo = distribuidor + descendientes (árbol del portal)
-function grupos(rows){
-  const all=filasTodos(); const kids={}; all.forEach(x=>{(kids[x.p]=kids[x.p]||[]).push(x)});
-  const memo={};
-  const g=id=>{if(memo[id])return memo[id]; const me=all.find(x=>x.id===id)||{act:0,ant:0}; let a=me.act,b=me.ant;(kids[id]||[]).forEach(k=>{const r=g(k.id);a+=r[0];b+=r[1]}); return memo[id]=[a,b]};
-  rows.forEach(x=>{const r=g(x.id); x.gact=r[0]; x.gant=r[1]});
-}
-function filasTodos(){const s=[st.prem,st.sub]; st.prem='';st.sub=''; const r=filasCV(); [st.prem,st.sub]=s; return r}
+const pasa=x=>(!st.prem||x.pr===st.prem)&&(!st.sub||x.s===st.sub)&&(!st.suc||x.suc===st.suc)&&(!st.comp||x.c===st.comp);
+const nomComp=c=>cap((D.companias[c]||{}).nombre||(D.distribuidores[c]||{}).n||c);
 
 function render(){
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.tab));
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===st.tab));
   const cv=st.tab==='compras'||st.tab==='ventas';
-  document.getElementById('secCV').classList.toggle('hidden',!cv);
-  document.getElementById('secBonos').classList.toggle('hidden',st.tab!=='bonos');
-  document.getElementById('secFondo').classList.toggle('hidden',st.tab!=='fondo');
-  document.getElementById('segTipo').classList.toggle('hidden',st.tab!=='compras');
-  if(cv) renderCV(); else if(st.tab==='bonos') renderBonos(); else renderFondo();
+  $('vCV').classList.toggle('hidden',!cv); $('vBonos').classList.toggle('hidden',st.tab!=='bonos');
+  $('vFondo').classList.toggle('hidden',st.tab!=='fondo'); $('vRed').classList.toggle('hidden',st.tab!=='red');
+  $('filtros').classList.toggle('hidden',!(cv||st.tab==='red'));
+  $('segTipo').classList.toggle('hidden',st.tab==='ventas');
+  ['fSuc','fComp','segPer'].forEach(i=>$(i).classList.toggle('hidden',st.tab==='red'));
+  if(st.tab==='red')$('segTipo').classList.add('hidden');
+  if(cv)$('avisos').innerHTML=(D.errores||[]).length?`<div class="aviso"><b>Revisar:</b> ${D.errores.map(esc).join(' · ')}</div>`:'';
+  if(cv)renderCV(); else if(st.tab==='bonos')renderBonos(); else if(st.tab==='fondo')renderFondo(); else renderRed();
 }
+
+function agrupar(rows,key){const g={};rows.forEach(x=>{const k=key(x)||'(sin dato)';const o=g[k]=g[k]||{k,act:0,ant:0,a:0,n:0,m:0};o.act+=x.act;o.ant+=x.ant;if(x.est!=='baja'){o.n++;if(x.act>0)o.a++}});return Object.values(g).map(o=>({...o,p:pct(o.act,o.ant),dv:o.act-o.ant,prom:o.a?o.act/o.a:0}))}
+function ordenar(arr,s){return arr.sort((a,b)=>{const va=a[s.k]??-1e18,vb=b[s.k]??-1e18;return (typeof va==='string'?va.localeCompare(vb):va-vb)*s.d})}
+function thead(cols,s){return '<thead><tr>'+cols.map(c=>`<th class="${c[2]||''}" data-k="${c[0]}" aria-sort="${s.k===c[0]?(s.d<0?'descending':'ascending'):'none'}">${c[1]}${s.k===c[0]?(s.d<0?' ↓':' ↑'):''}</th>`).join('')+'</tr></thead>'}
+function bindSort(id,key){document.querySelectorAll(`#${id} th`).forEach(th=>th.onclick=()=>{const k=th.dataset.k;st[key]={k,d:st[key].k===k?-st[key].d:-1};render()})}
 
 function renderCV(){
-  const rows=filasCV(); const P=periodoTxt(st.tab);
-  const A=rows.reduce((s,x)=>s+x.act,0), B=rows.reduce((s,x)=>s+x.ant,0);
-  const vig=rows.filter(x=>!x.b), activos=vig.filter(x=>x.act>0).length;
-  const nombre=st.tab==='compras'?(st.tipo==='M'?'Compras (solo mercancía)':'Compras (mercancía + premiums)'):'Ventas (volumen)';
-  const p=pct(A,B);
-  document.getElementById('kpisCV').innerHTML=`
-    <div class="kpi"><div class="l">${nombre}</div><div class="v">${usd(A)}</div><div class="d">${P.act}</div></div>
-    <div class="kpi" style="border-left-color:#939393"><div class="l">Mismo periodo año anterior</div><div class="v">${usd(B)}</div><div class="d">${P.ant}</div></div>
-    <div class="kpi" style="border-left-color:${p!==null&&p>=0?'var(--up)':'var(--down)'}"><div class="l">Variación</div><div class="v ${p!==null&&p>=0?'up':'down'}">${fpTxt(p)}</div><div class="d">${(A-B>=0?'+':'')+usd(A-B)} USD</div></div>
-    <div class="kpi"><div class="l">Distribuidores con actividad</div><div class="v">${activos} / ${vig.length}</div><div class="d">vigentes en el reporte</div></div>
-    <div class="kpi"><div class="l">Promedio por activo</div><div class="v">${usd(activos?A/activos:0)}</div><div class="d">USD por distribuidor</div></div>`;
-  document.getElementById('lgAct').textContent=P.act; document.getElementById('lgAnt').textContent=P.ant;
-
-  // subterritorios
-  const subs={}; rows.forEach(x=>{const k=x.sub||'(sin asignar)'; const s=subs[k]=subs[k]||{sub:k,prem:x.prem,niv:(D.subterritorios[k]||{}).nivel||'',act:0,ant:0,a:0,n:0}; s.act+=x.act; s.ant+=x.ant; if(!x.b){s.n++; if(x.act>0)s.a++;}});
-  let sl=Object.values(subs).map(s=>({...s,p:pct(s.act,s.ant),dv:s.act-s.ant}));
-  const ks=st.sortS; sl.sort((a,b)=>((a[ks.k]??-1e18)>(b[ks.k]??-1e18)?1:-1)*ks.d);
-  const hS=[['sub','Subterritorio'],['prem','Premier'],['niv','Nivel'],['act','Actual','n'],['ant','Año ant.','n'],['p','Var %','n'],['dv','Var $','n'],['a','Activos','n']];
-  document.getElementById('tbSub').innerHTML='<thead><tr>'+hS.map(h=>`<th class="${h[2]||''}" data-k="${h[0]}">${h[1]}${ks.k===h[0]?(ks.d<0?' ↓':' ↑'):''}</th>`).join('')+'</tr></thead><tbody>'+
-    sl.map(s=>`<tr><td><b>${s.sub}</b></td><td>${s.prem}</td><td>${s.niv}</td><td class="n">${usd(s.act)}</td><td class="n mut">${usd(s.ant)}</td><td class="n">${fp(s.p)}</td><td class="n ${s.dv>=0?'up':'down'}">${usd(s.dv)}</td><td class="n">${s.a} / ${s.n}</td></tr>`).join('')+
-    `<tr><td><b>Total</b></td><td></td><td></td><td class="n"><b>${usd(A)}</b></td><td class="n mut"><b>${usd(B)}</b></td><td class="n">${fp(p)}</td><td class="n"><b>${usd(A-B)}</b></td><td class="n">${activos} / ${vig.length}</td></tr></tbody>`;
-  document.querySelectorAll('#tbSub th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; st.sortS={k,d:st.sortS.k===k?-st.sortS.d:-1}; renderCV()});
-
-  // chart
-  const cs=[...Object.values(subs)].sort((a,b)=>b.act-a.act);
-  drawBars('chSub',cs.map(s=>s.sub),[{label:P.act,data:cs.map(s=>s.act),c:'--s1'},{label:P.ant,data:cs.map(s=>s.ant),c:'--s2'}],true,v=>usd(v));
-
-  // distribuidores
-  grupos(rows);
-  let dl=rows.map(x=>({...x,pc:pct(x.act,x.ant),dv:x.act-x.ant}));
-  const q=st.q.toLowerCase();
-  if(q) dl=dl.filter(x=>x.n.toLowerCase().includes(q)||x.id.includes(q));
-  if(st.act==='act') dl=dl.filter(x=>x.act>0);
-  if(st.act==='sin') dl=dl.filter(x=>x.act<=0);
-  if(st.act==='nuevo') dl=dl.filter(x=>x.act>0&&x.ant<=0);
-  if(st.act==='cae') dl=dl.filter(x=>x.ant>0&&x.act<x.ant);
-  if(st.act==='crece') dl=dl.filter(x=>x.ant>0&&x.act>x.ant);
-  const kd=st.sortD; dl.sort((a,b)=>{const va=a[kd.k]??-1e18, vb=b[kd.k]??-1e18; return (typeof va==='string'?va.localeCompare(vb):(va-vb))*kd.d});
-  const hD=[['id','#'],['n','Distribuidor'],['sub','Subterritorio'],['lv','Nivel'],['act','Actual','n'],['ant','Año ant.','n'],['pc','Var %','n'],['dv','Var $','n'],['gact','Grupo actual','n'],['gant','Grupo año ant.','n']];
-  document.getElementById('tbDist').innerHTML='<thead><tr>'+hD.map(h=>`<th class="${h[2]||''}" data-k="${h[0]}">${h[1]}${kd.k===h[0]?(kd.d<0?' ↓':' ↑'):''}</th>`).join('')+'</tr></thead><tbody>'+
-    dl.map(x=>`<tr><td class="mut">${x.id}</td><td>${x.n}${x.b?'<span class="pill baja">BAJA</span>':''}</td><td>${x.sub}${x.org?'':'*'}</td><td>${x.lv}</td><td class="n">${usd(x.act)}</td><td class="n mut">${usd(x.ant)}</td><td class="n">${x.act<=0&&x.ant<=0?'<span class="mut">—</span>':fp(x.pc)}</td><td class="n ${x.dv>=0?'up':'down'}">${usd(x.dv)}</td><td class="n">${x.gact!==x.act?usd(x.gact):'<span class="mut">—</span>'}</td><td class="n mut">${x.gant!==x.ant?usd(x.gant):'—'}</td></tr>`).join('')+'</tbody>';
-  document.getElementById('cntDist').textContent=`${dl.length} de ${rows.length} · USD`;
-  document.querySelectorAll('#tbDist th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; st.sortD={k,d:st.sortD.k===k?-st.sortD.d:-1}; renderCV()});
-  document.getElementById('tSubChart').textContent=`${nombre} por subterritorio`;
+  const all=filas(), rows=all.filter(pasa), P=periodo(st.tab);
+  const A=rows.reduce((s,x)=>s+x.act,0),B=rows.reduce((s,x)=>s+x.ant,0),p=pct(A,B);
+  const vig=rows.filter(x=>x.est!=='baja'),act=vig.filter(x=>x.act>0).length;
+  const nom=st.tab==='compras'?(st.tipo==='M'?'en compras de mercancía':'en compras de mercancía y premiums'):'en ventas';
+  const filtro=[st.prem&&('premier '+st.prem),st.sub,st.suc&&cap(st.suc),st.comp&&('compañía '+nomComp(st.comp))].filter(Boolean).join(', ');
+  const subsA=agrupar(rows,x=>x.s).filter(s=>s.ant>0).sort((a,b)=>b.p-a.p);
+  $('hero').innerHTML=`<div class="num">${usd(A)}<small>USD</small></div>
+   <p class="frase">${nom} de ${P.act} (${P.hasta})${filtro?' · '+esc(filtro):''}. <span class="chip ${p!==null&&p>=0?'up':'down'}">${fpt(p)}</span> contra <b>${usd(B)}</b> del mismo tramo de ${P.ant}.</p>
+   <div class="strip">
+     <div><div class="v">${(A-B>=0?'+':'')+usd(A-B)}</div><div class="l">diferencia vs año pasado</div></div>
+     <div><div class="v">${act} de ${vig.length}</div><div class="l">distribuidores con actividad</div></div>
+     <div><div class="v">${usd(act?A/act:0)}</div><div class="l">promedio por distribuidor activo</div></div>
+     ${subsA.length>1?`<div><div class="v">${subsA[0].k} ${fpt(subsA[0].p)}</div><div class="l">subterritorio que más crece</div></div>`:''}
+   </div>`;
+  // Subterritorios
+  const subs=ordenar(agrupar(rows,x=>x.s).map(s=>({...s,pr:(D.subterritorios[s.k]||{}).premier||'',nv:(D.subterritorios[s.k]||{}).nivel||''})),st.sS);
+  $('tSub').textContent='Subterritorios';
+  const mx=Math.max(...subs.map(s=>Math.max(s.act,0)),1);
+  $('tbSub').innerHTML=thead([['k','Subterritorio'],['act','Actual','n'],['ant','Año pasado','n'],['p','Var.','n'],['a','Activos','n']],st.sS)+'<tbody>'+
+    subs.map(s=>`<tr><td><b>${s.k}</b> <span class="tag nv">${s.nv}</span></td><td class="n">${usd(s.act)}</td><td class="n mut">${usd(s.ant)}</td><td class="n">${fp(s.p)}</td><td class="n">${s.a}/${s.n}</td></tr>`).join('')+
+    `<tr class="tot"><td>Total</td><td class="n">${usd(A)}</td><td class="n">${usd(B)}</td><td class="n">${fp(p)}</td><td class="n">${act}/${vig.length}</td></tr></tbody>`;
+  bindSort('tbSub','sS');
+  const cs=[...subs].sort((a,b)=>b.act-a.act);
+  $('lgSub').innerHTML=`<span><i style="background:var(--s1)"></i>${cap(P.act)}</span><span><i style="background:var(--s2)"></i>${cap(P.ant)}</span>`;
+  barras('chSub',cs.map(s=>s.k),[{l:cap(P.act),d:cs.map(s=>s.act),c:'--s1'},{l:cap(P.ant),d:cs.map(s=>s.ant),c:'--s2'}],true,v=>usd(v));
+  // Sucursales
+  const sucs=ordenar(agrupar(rows,x=>x.suc?cap(x.suc):'Sin sucursal (bajas)'),st.sS);
+  const mxs=Math.max(...sucs.map(s=>Math.max(s.act,0)),1);
+  $('tbSuc').innerHTML='<thead><tr><th>Sucursal</th><th class="n">Actual</th><th class="n">Año pasado</th><th class="n">Var.</th><th class="n">Activos</th><th>Peso</th></tr></thead><tbody>'+
+    sucs.map(s=>`<tr><td><b>${esc(s.k)}</b></td><td class="n">${usd(s.act)}</td><td class="n mut">${usd(s.ant)}</td><td class="n">${fp(s.p)}</td><td class="n">${s.a}/${s.n}</td><td><span class="bar" style="width:${Math.max(2,s.act/mxs*160)}px"></span> <span class="mut">${A>0?(s.act/A*100).toFixed(0):0}%</span></td></tr>`).join('')+'</tbody>';
+  // Compañías
+  const comps=ordenar(agrupar(rows,x=>x.c).map(c=>({...c,nom:nomComp(c.k),s:(D.companias[c.k]||{}).s||(D.distribuidores[c.k]||{}).s||'',nv:(D.distribuidores[c.k]||{}).nv||''})),st.sC);
+  $('tbComp').innerHTML=thead([['nom','Compañía'],['s','Subterritorio'],['act','Actual','n'],['ant','Año pasado','n'],['p','Var.','n'],['a','Activos','n'],['prom','Promedio por activo','n']],st.sC)+'<tbody>'+
+    comps.map(c=>`<tr><td><b>${esc(c.nom)}</b> <span class="tag nv">${c.nv||''}</span></td><td>${c.s}</td><td class="n">${usd(c.act)}</td><td class="n mut">${usd(c.ant)}</td><td class="n">${fp(c.p)}</td><td class="n">${c.a}/${c.n}</td><td class="n">${usd(c.prom)}</td></tr>`).join('')+'</tbody>';
+  bindSort('tbComp','sC');
+  // Distribuidores
+  let dl=rows.map(x=>({...x,p:pct(x.act,x.ant),dv:x.act-x.ant,cn:nomComp(x.c)}));
+  const q=st.q.toLowerCase(); if(q)dl=dl.filter(x=>x.n.toLowerCase().includes(q)||x.id.includes(q));
+  const f={act:x=>x.act>0,sin:x=>x.act<=0,nuevo:x=>x.act>0&&x.ant<=0,cae:x=>x.ant>0&&x.act<x.ant,crece:x=>x.ant>0&&x.act>x.ant}[st.act]; if(f)dl=dl.filter(f);
+  ordenar(dl,st.sD);
+  $('tbDist').innerHTML=thead([['id','#'],['n','Distribuidor'],['nv','Nivel','n'],['cn','Compañía'],['s','Subterritorio'],['act','Actual','n'],['ant','Año pasado','n'],['p','Var.','n'],['dv','Diferencia','n']],st.sD)+'<tbody>'+
+    dl.map(x=>`<tr><td class="mut">${x.id}</td><td>${esc(cap(x.n))}${x.est==='baja'?'<span class="tag baja">Baja</span>':x.est==='nuevo'?'<span class="tag nuevo">Falta en tu hoja</span>':''}</td><td class="n mut">${x.nv}</td><td>${esc(x.cn)}</td><td>${x.s}</td><td class="n">${usd(x.act)}</td><td class="n mut">${usd(x.ant)}</td><td class="n">${x.act<=0&&x.ant<=0?'<span class="mut">—</span>':fp(x.p)}</td><td class="n ${x.dv>=0?'up':'down'}">${usd(x.dv)}</td></tr>`).join('')+'</tbody>';
+  $('cntDist').textContent=`${dl.length} de ${rows.length} · USD`;
+  bindSort('tbDist','sD');
 }
 
-function drawBars(id,labels,series,horizontal,fmt,stacked){
-  if(charts[id]) charts[id].destroy();
-  const ctx=document.getElementById(id);
-  charts[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:series.map(s=>({label:s.label,data:s.data,backgroundColor:css(s.c),borderRadius:4,borderSkipped:false,barPercentage:.82,categoryPercentage:.72}))},
-    options:{indexAxis:horizontal?'y':'x',maintainAspectRatio:false,animation:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},
-      scales:(()=>{const val={beginAtZero:true,grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>fmtCorto(v)}};
-              const cat={grid:{color:'transparent'},ticks:{color:css('--ink2'),autoSkip:false}};
-              return horizontal?{x:val,y:cat}:{x:cat,y:val}})()}});
+function barras(id,labels,series,horiz,fmt,stacked){
+  if(charts[id])charts[id].destroy();
+  const val={beginAtZero:true,stacked:!!stacked,grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>corto(v)}};
+  const cat={stacked:!!stacked,grid:{display:false},ticks:{color:css('--ink2'),autoSkip:false,font:{family:'Archivo'}}};
+  charts[id]=new Chart($(id),{type:'bar',data:{labels,datasets:series.map(s=>({label:s.l,data:s.d,backgroundColor:css(s.c),borderRadius:4,borderSkipped:false,borderColor:css('--surface'),borderWidth:stacked?{top:2}:0,barPercentage:.84,categoryPercentage:.74}))},
+    options:{indexAxis:horiz?'y':'x',maintainAspectRatio:false,animation:false,interaction:{mode:stacked?'index':'nearest',intersect:!stacked},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw||0)}`}}},scales:horiz?{x:val,y:cat}:{x:cat,y:val}}});
 }
-function fmtCorto(v){const a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a)}
+const corto=v=>{const a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a)};
 
 function renderBonos(){
-  const b=[...D.bonos].sort((x,y)=>y.periodo-x.periodo);
-  const ult=b[0], est=(D.bono_estimado||[])[0];
-  const yr=+String(ult.periodo).slice(0,4), mUlt=+String(ult.periodo).slice(4,6);
-  const acum=(y)=>b.filter(x=>+String(x.periodo).slice(0,4)===y&&+String(x.periodo).slice(4,6)<=mUlt).reduce((s,x)=>s+x.total,0);
-  const a1=acum(yr), a0=acum(yr-1), p=pct(a1,a0);
-  const mismoMesAnt=b.find(x=>x.periodo===ult.periodo-100);
-  document.getElementById('kpisB').innerHTML=`
-    <div class="kpi"><div class="l">Último bono pagado</div><div class="v">${mxn(ult.total)}</div><div class="d">${perLabel(ult.periodo)} · ${usd(ult.total_usd)} USD${mismoMesAnt?` · ${fpTxt(pct(ult.total,mismoMesAnt.total))} vs ${perLabel(mismoMesAnt.periodo)}`:''}</div></div>
-    ${est?`<div class="kpi" style="border-left-color:var(--warn)"><div class="l">Estimado mes en curso</div><div class="v">${mxn(est.total)}</div><div class="d">${perLabel(est.periodo)} · liderazgo ${mxn(est.liderazgo)} · reclutador ${mxn(est.reclutador)}</div></div>`:''}
-    <div class="kpi"><div class="l">Acumulado ${yr} (ene–${MES[mUlt-1].toLowerCase()})</div><div class="v">${mxn(a1)}</div><div class="d">promedio ${mxn(a1/mUlt)} por mes</div></div>
-    <div class="kpi" style="border-left-color:${p>=0?'var(--up)':'var(--down)'}"><div class="l">vs mismo periodo ${yr-1}</div><div class="v ${p>=0?'up':'down'}">${fpTxt(p)}</div><div class="d">${mxn(a0)} en ${yr-1}</div></div>`;
-  const ser=(y)=>MES.map((m,i)=>{const r=b.find(x=>x.periodo===y*100+i+1);return r?r.total:null});
-  document.getElementById('lgB').innerHTML=`<span><i style="background:var(--s1)"></i>${yr}</span><span><i style="background:var(--s2)"></i>${yr-1}</span>`;
-  drawBars('chB',MES,[{label:String(yr),data:ser(yr),c:'--s1'},{label:String(yr-1),data:ser(yr-1),c:'--s2'}],false,v=>mxn(v));
-  document.getElementById('tbB').innerHTML='<thead><tr><th>Mes</th><th class="n">Overrides</th><th class="n">Ajuste reserva</th><th class="n">Total pagado</th><th class="n">USD</th><th class="n">TC</th><th class="n">vs año ant.</th><th>Procesado</th></tr></thead><tbody>'+
-    b.map(x=>{const pa=b.find(y=>y.periodo===x.periodo-100);return `<tr><td><b>${perLabel(x.periodo)}</b></td><td class="n">${mxn(x.overrides)}</td><td class="n">${x.ajuste?mxn(x.ajuste):'<span class="mut">—</span>'}</td><td class="n"><b>${mxn(x.total)}</b></td><td class="n mut">${usd(x.total_usd)}</td><td class="n mut">${x.tc?(+x.tc).toFixed(2):''}</td><td class="n">${pa?fp(pct(x.total,pa.total)):'<span class="mut">—</span>'}</td><td class="mut">${x.fecha_proceso||''}</td></tr>`}).join('')+'</tbody>';
+  const b=[...D.bonos].sort((x,y)=>y.periodo-x.periodo), u=b[0], est=(D.bono_estimado||[])[0];
+  const y=+String(u.periodo).slice(0,4), m=+String(u.periodo).slice(4,6);
+  const prev=b.find(x=>x.periodo===u.periodo-100);
+  const acum=yy=>b.filter(x=>+String(x.periodo).slice(0,4)===yy&&+String(x.periodo).slice(4,6)<=m).reduce((s,x)=>s+x.total,0);
+  const a1=acum(y),a0=acum(y-1),pa=pct(a1,a0), aviso=(BD[String(u.periodo)]||{}).aviso;
+  $('hero').innerHTML=`<div class="num">${usd(u.total)}<small>MXN</small></div>
+   <p class="frase">de bono pagado por ${perL(u.periodo)}${prev?` · <span class="chip ${u.total>=prev.total?'up':'down'}">${fpt(pct(u.total,prev.total))}</span> contra ${perL(prev.periodo)} (${usd(prev.total)})`:''}. En lo que va del año llevas <b>${usd(a1)}</b>, ${fpt(pa)} contra el mismo tramo de ${y-1}.</p>
+   <div class="strip">
+     ${est?`<div><div class="v">${usd(est.total)}</div><div class="l">estimado de ${MESL[+String(est.periodo).slice(4,6)-1]} hasta hoy</div></div>`:''}
+     <div><div class="v">${usd(a1/m)}</div><div class="l">promedio mensual ${y}</div></div>
+     <div><div class="v">${usd(u.total_usd)}</div><div class="l">último bono en USD (TC ${(+u.tc).toFixed(2)})</div></div>
+   </div>`;
+  $('mesCorte').textContent=MESL[m-1];
+  const meses=Object.keys(BD).sort(), conc=Object.keys(CONC).filter(c=>meses.some(p=>(BD[p].conceptos||{})[c]));
+  $('lgB').innerHTML=conc.map(c=>`<span><i style="background:var(${CONC[c][1]})"></i>${CONC[c][0]}</span>`).join('');
+  barras('chB',meses.map(perC),conc.map(c=>({l:CONC[c][0],d:meses.map(p=>(BD[p].conceptos||{})[c]||0),c:CONC[c][1]})),false,v=>usd(v)+' MXN',true);
+  const sumC=(yy,c)=>meses.filter(p=>+p.slice(0,4)===yy&&+p.slice(4,6)<=m).reduce((s,p)=>s+((BD[p].conceptos||{})[c]||0),0);
+  let t0=0,t1=0;
+  $('tbConc').innerHTML=`<thead><tr><th>Concepto</th><th class="n">${y-1}</th><th class="n">${y}</th><th class="n">Diferencia</th><th class="n">Var.</th></tr></thead><tbody>`+
+    conc.map(c=>{const a=sumC(y-1,c),b2=sumC(y,c);t0+=a;t1+=b2;return `<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(${CONC[c][1]});margin-right:8px"></i>${CONC[c][0]}</td><td class="n mut">${usd(a)}</td><td class="n">${usd(b2)}</td><td class="n ${b2-a>=0?'up':'down'}">${usd(b2-a)}</td><td class="n">${a?fp(pct(b2,a)):'<span class="tag nuevo">Nuevo</span>'}</td></tr>`}).join('')+
+    `<tr class="tot"><td>Total facturado</td><td class="n">${usd(t0)}</td><td class="n">${usd(t1)}</td><td class="n">${usd(t1-t0)}</td><td class="n">${fp(pct(t1,t0))}</td></tr></tbody>`;
+  // quién genera
+  const B1=BD[st.bMes]; let rows=[];
+  if(B1){const tc=B1.tc||1; const conM=Object.keys(CONC).filter(c=>Object.values(B1.detalle_usd).some(v=>v[c]));
+    const base=Object.entries(B1.detalle_usd).map(([i,v])=>{const d=D.distribuidores[i]||{};const o={id:i,n:cap(d.n||d.pn||i),s:d.s||'',c:d.c||'',tot:0};conM.forEach(c=>{o[c]=(v[c]||0)*tc;o.tot+=o[c]});return o});
+    if(st.bAgr==='d')rows=base; else{const g={};base.forEach(o=>{const k=st.bAgr==='c'?o.c:o.s;const r=g[k]=g[k]||{id:k,n:st.bAgr==='c'?nomComp(k):k,tot:0};conM.forEach(c=>r[c]=(r[c]||0)+o[c]);r.tot+=o.tot});rows=Object.values(g)}
+    ordenar(rows,st.sB);
+    const T=rows.reduce((s,x)=>s+x.tot,0);
+    $('tbBD').innerHTML=thead([['n',st.bAgr==='d'?'Distribuidor':st.bAgr==='c'?'Compañía':'Subterritorio'],...(st.bAgr==='d'?[['s','Subterritorio']]:[]),['tot','Total MXN','n'],...conM.map(c=>[c,CONC[c][0],'n'])],st.sB)+'<tbody>'+
+      rows.map(x=>`<tr><td>${st.bAgr==='d'?`<span class="mut">${x.id}</span> `:''}${esc(x.n)}</td>${st.bAgr==='d'?`<td>${x.s}</td>`:''}<td class="n ${x.tot<0?'down':''}"><b>${usd(x.tot)}</b></td>${conM.map(c=>`<td class="n ${x[c]<0?'down':'mut'}">${x[c]?usd(x[c]):'—'}</td>`).join('')}</tr>`).join('')+
+      `<tr class="tot"><td>Total</td>${st.bAgr==='d'?'<td></td>':''}<td class="n">${usd(T)}</td>${conM.map(c=>`<td class="n">${usd(rows.reduce((s,x)=>s+(x[c]||0),0))}</td>`).join('')}</tr></tbody>`;
+    bindSort('tbBD','sB');
+  }
+  $('tbB').innerHTML='<thead><tr><th>Mes</th><th class="n">Bonos</th><th class="n">Ajuste reserva</th><th class="n">Total pagado</th><th class="n">vs año pasado</th><th class="n">USD</th><th>Procesado</th></tr></thead><tbody>'+
+    b.map(x=>{const pa=b.find(z=>z.periodo===x.periodo-100);return `<tr><td><b>${cap(perL(x.periodo))}</b></td><td class="n">${usd(x.overrides)}</td><td class="n">${x.ajuste?usd(x.ajuste):'<span class="mut">—</span>'}</td><td class="n"><b>${usd(x.total)}</b></td><td class="n">${pa?fp(pct(x.total,pa.total)):'—'}</td><td class="n mut">${usd(x.total_usd)}</td><td class="mut">${x.fecha_proceso||''}</td></tr>`}).join('')+'</tbody>';
+  $('avisos').innerHTML=(aviso?`<div class="aviso"><b>Aviso en tu estado de cuenta de ${perL(u.periodo)}:</b> ${esc(aviso)} (tus compras personales de 3 de los últimos 4 meses están abajo del mínimo de $2,250 USD; afecta el ajuste de reserva).</div>`:'');
 }
 
 function renderFondo(){
-  const f=[...D.fondo].sort((x,y)=>y.periodo-x.periodo);
-  const u=f[0], yr=+String(u.periodo).slice(0,4);
-  const anio=f.filter(x=>+String(x.periodo).slice(0,4)===yr);
-  const cargos=anio.reduce((s,x)=>s+x.cargos,0), pagos=anio.reduce((s,x)=>s+x.pagos,0);
-  document.getElementById('kpisF').innerHTML=`
-    <div class="kpi"><div class="l">Saldo actual</div><div class="v">${mxn(u.saldo)}</div><div class="d">${perLabel(u.periodo)} · ${usd(u.saldo_usd)} USD</div></div>
-    <div class="kpi"><div class="l">Cargos del mes</div><div class="v">${mxn(u.cargos)}</div><div class="d">${perLabel(u.periodo)}</div></div>
-    <div class="kpi" style="border-left-color:var(--s2)"><div class="l">Pagos del mes</div><div class="v">${mxn(Math.abs(u.pagos))}</div><div class="d">${perLabel(u.periodo)}</div></div>
-    <div class="kpi"><div class="l">Acumulado ${yr}</div><div class="v">${mxn(cargos)}</div><div class="d">cargos · pagos ${mxn(Math.abs(pagos))}</div></div>`;
+  const f=[...D.fondo].sort((a,b)=>b.periodo-a.periodo), u=f[0], y=+String(u.periodo).slice(0,4);
+  const an=f.filter(x=>+String(x.periodo).slice(0,4)===y), ap=an.reduce((s,x)=>s+x.cargos,0);
+  const re=(D.fondo_reembolsos||[]).filter(x=>x.fecha.startsWith(String(y))), ret=re.reduce((s,x)=>s+x.monto,0);
+  $('hero').innerHTML=`<div class="num">${usd(u.saldo)}<small>MXN</small></div>
+   <p class="frase">de saldo en tu fondo de juntas Network Leader al cierre de ${perL(u.periodo)}. En ${y} han entrado <b>${usd(ap)}</b> y has cobrado <b>${usd(ret)}</b> en ${re.length} reembolsos.</p>
+   <div class="strip"><div><div class="v">${usd(u.cargos)}</div><div class="l">aportado en ${MESL[+String(u.periodo).slice(4,6)-1]}</div></div>
+   <div><div class="v">${re[0]?usd(re[0].monto):'—'}</div><div class="l">último reembolso${re[0]?' · '+re[0].fecha:''}</div></div>
+   <div><div class="v">${usd(u.saldo_usd)}</div><div class="l">saldo en USD</div></div></div>`;
   const asc=[...f].reverse().slice(-24);
-  if(charts.chFS) charts.chFS.destroy();
-  charts.chFS=new Chart(document.getElementById('chFS'),{type:'line',data:{labels:asc.map(x=>mesCorto(x.periodo)),datasets:[{label:'Saldo',data:asc.map(x=>x.saldo),borderColor:css('--s1'),backgroundColor:css('--s1'),borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:0}]},
-    options:{maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Saldo: '+mxn(c.raw)}}},
-      scales:{x:{grid:{color:'transparent'},ticks:{color:css('--ink2')}},y:{grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>fmtCorto(v)}}}}});
-  drawBars('chFC',asc.map(x=>mesCorto(x.periodo)),[{label:'Cargos',data:asc.map(x=>x.cargos),c:'--s1'},{label:'Pagos',data:asc.map(x=>Math.abs(x.pagos)),c:'--s2'}],false,v=>mxn(v));
-  document.getElementById('tbF').innerHTML='<thead><tr><th>Periodo</th><th class="n">Cargos</th><th class="n">Pagos</th><th class="n">Saldo final</th><th class="n">Saldo USD</th></tr></thead><tbody>'+
-    f.map(x=>`<tr><td><b>${perLabel(x.periodo)}</b></td><td class="n">${mxn(x.cargos)}</td><td class="n down">${mxn(x.pagos)}</td><td class="n"><b>${mxn(x.saldo)}</b></td><td class="n mut">${usd(x.saldo_usd)}</td></tr>`).join('')+'</tbody>';
+  if(charts.chFS)charts.chFS.destroy();
+  charts.chFS=new Chart($('chFS'),{type:'line',data:{labels:asc.map(x=>perC(x.periodo)),datasets:[{label:'Saldo',data:asc.map(x=>x.saldo),borderColor:css('--s1'),backgroundColor:css('--s1'),borderWidth:2,pointRadius:3,pointHoverRadius:6,tension:0}]},
+    options:{maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Saldo: '+usd(c.raw)+' MXN'}}},scales:{x:{grid:{display:false},ticks:{color:css('--ink2')}},y:{beginAtZero:true,grid:{color:css('--grid')},ticks:{color:css('--ink2'),callback:v=>corto(v)}}}}});
+  barras('chFC',asc.map(x=>perC(x.periodo)),[{l:'Aportaciones',d:asc.map(x=>x.cargos),c:'--s1'},{l:'Retiros y cancelaciones',d:asc.map(x=>Math.abs(x.pagos)),c:'--s2'}],false,v=>usd(v)+' MXN');
+  $('tbFR').innerHTML='<thead><tr><th>Fecha</th><th>Factura</th><th class="n">Monto MXN</th><th>Concepto</th></tr></thead><tbody>'+
+    (D.fondo_reembolsos||[]).map(x=>`<tr><td>${x.fecha}</td><td><b>${(x.desc.match(/F\.?\s?\d+/)||[''])[0]}</b></td><td class="n">${usd(x.monto)}</td><td class="mut">${esc(x.desc)}</td></tr>`).join('')+'</tbody>';
+  $('tbF').innerHTML='<thead><tr><th>Mes</th><th class="n">Aportaciones</th><th class="n">Retiros</th><th class="n">Saldo final</th></tr></thead><tbody>'+
+    f.map(x=>`<tr><td><b>${cap(perL(x.periodo))}</b></td><td class="n">${usd(x.cargos)}</td><td class="n down">${usd(x.pagos)}</td><td class="n"><b>${usd(x.saldo)}</b></td></tr>`).join('')+'</tbody>';
+  $('avisos').innerHTML='';
 }
 
-// eventos
-document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t; render()});
-const seg=(id,key)=>document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{st[key]=b.dataset.v; document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle('on',x===b)); render()});
-seg('segPer','per'); seg('segTipo','tipo');
-document.getElementById('selPrem').onchange=e=>{st.prem=e.target.value; render()};
-document.getElementById('selSub').onchange=e=>{st.sub=e.target.value; render()};
-document.getElementById('q').oninput=e=>{st.q=e.target.value; renderCV()};
-document.getElementById('selAct').onchange=e=>{st.act=e.target.value; renderCV()};
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>render());
+function renderRed(){
+  const tot={}; D.compras.YTD.filas.forEach(f=>tot[f[0]]=f[1]+f[2]);
+  const mtd={}; D.compras.MTD.filas.forEach(f=>mtd[f[0]]=f[1]+f[2]);
+  const DD=D.distribuidores, ok=i=>{const d=DD[i]||{};return (!st.prem||d.pr===st.prem)&&(!st.sub||d.s===st.sub)&&(!st.suc||d.suc===st.suc)};
+  const fmtv=(a,m)=>`<span class="val">${usd(a)} <span class="mut">año</span> · ${usd(m)} <span class="mut">mes</span></span>`;
+  const activos=Object.entries(DD).filter(([i,d])=>d.est!=='baja'&&ok(i));
+  $('hero').innerHTML=`<div class="num">${activos.length}<small>distribuidores vigentes</small></div>
+   <p class="frase">en ${Object.keys(D.subterritorios).length} subterritorios y ${Object.keys(D.companias).length} compañías, según tu hoja. Compras de mercancía y premiums en USD, año y mes a la fecha.</p>`;
+  let h='';
+  if(st.red==='hoja'){
+    $('redNota').textContent='Premier → subterritorio → compañía → distribuidor';
+    const prem={};
+    Object.entries(DD).forEach(([i,d])=>{if(!ok(i)||d.est==='baja'&&!tot[i])return;const p=d.pr||'Sin premier';((prem[p]=prem[p]||{})[d.s||'—']=(prem[p][d.s||'—']||{}));const c=prem[p][d.s||'—'];(c[d.c]=c[d.c]||[]).push(i)});
+    const sum=ids=>[ids.reduce((s,i)=>s+(tot[i]||0),0),ids.reduce((s,i)=>s+(mtd[i]||0),0)];
+    for(const [p,subs] of Object.entries(prem).sort()){
+      const pid=Object.values(subs).flatMap(c=>Object.values(c).flat()); const [pa,pm]=sum(pid);
+      h+=`<details open class="lvl0"><summary class="node"><span class="nm">${p}</span><span class="meta">${Object.keys(subs).length} subterritorios</span>${fmtv(pa,pm)}</summary>`;
+      for(const [s,comps] of Object.entries(subs).sort((a,b)=>sum(Object.values(b[1]).flat())[0]-sum(Object.values(a[1]).flat())[0])){
+        const sid=Object.values(comps).flat(); const [sa,sm]=sum(sid); const si=D.subterritorios[s]||{};
+        h+=`<details class="lvl1"><summary class="node"><span class="nm">${s}</span><span class="meta">${si.nivel||''} · líder ${esc(cap(si.lider_nombre||''))} · ${sid.filter(i=>DD[i].est!=='baja').length} vigentes</span>${fmtv(sa,sm)}</summary>`;
+        for(const [c,ids] of Object.entries(comps).sort((a,b)=>sum(b[1])[0]-sum(a[1])[0])){
+          const [ca,cm]=sum(ids);
+          h+=`<details class="lvl2"><summary class="node"><span class="nm">${esc(nomComp(c))}</span><span class="meta">${(DD[c]||{}).nv||''} · ${ids.filter(i=>DD[i].est!=='baja').length} vigentes</span>${fmtv(ca,cm)}</summary>`+
+            ids.sort((a,b)=>(tot[b]||0)-(tot[a]||0)).map(i=>`<div class="leaf"><span class="mut">${i}</span><span>${esc(cap(DD[i].n))}</span><span class="tag nv">${DD[i].nv||'—'}</span>${DD[i].est==='baja'?'<span class="tag baja">Baja</span>':DD[i].est==='nuevo'?'<span class="tag nuevo">Falta en tu hoja</span>':''}<span class="mut">${cap(DD[i].suc||'')}</span>${fmtv(tot[i]||0,mtd[i]||0)}</div>`).join('')+'</details>';
+        }
+        h+='</details>';
+      }
+      h+='</details>';
+    }
+  }else{
+    $('redNota').textContent='Quién patrocina a quién en el portal; los montos incluyen toda la línea de abajo';
+    const kids={}; Object.entries(DD).forEach(([i,d])=>{(kids[d.p]=kids[d.p]||[]).push(i)});
+    const g={}; const grp=i=>{if(g[i])return g[i];let a=tot[i]||0,m=mtd[i]||0;(kids[i]||[]).forEach(k=>{const r=grp(k);a+=r[0];m+=r[1]});return g[i]=[a,m]};
+    const nodo=(i,lv)=>{const d=DD[i]||{};const ks=(kids[i]||[]).filter(k=>grp(k)[0]||grp(k)[1]||DD[k].est!=='baja').sort((a,b)=>grp(b)[0]-grp(a)[0]);const [a,m]=grp(i);
+      const lab=`<span class="mut">${i}</span><span class="nm">${esc(cap(d.n))}</span><span class="tag nv">${d.lv||''}</span><span class="meta">${d.s||''}${d.est==='baja'?' · baja':''}</span>${fmtv(a,m)}`;
+      return ks.length?`<details ${lv<1?'open':''} class="lvl${Math.min(lv,2)}"><summary class="node">${lab}</summary>${ks.map(k=>nodo(k,lv+1)).join('')}</details>`:`<div class="leaf">${lab}</div>`};
+    h=nodo('13588',0);
+  }
+  $('arbol').innerHTML=h;
+  const nuevos=Object.entries(DD).filter(([i,d])=>d.est==='nuevo');
+  $('pendientes').innerHTML=`<h2>Pendientes para tu hoja</h2><p class="sub">Para que los reportes cuadren al 100%.</p><div class="tbl" style="max-height:none"><table><thead><tr><th>Caso</th><th>Distribuidores</th></tr></thead><tbody>
+   <tr><td>Compraron este mes y no están en la hoja</td><td>${nuevos.map(([i,d])=>`${i} ${esc(cap(d.n))} (patrocina ${d.p})`).join('<br>')||'—'}</td></tr>
+   <tr><td>En la hoja pero sin movimiento en el portal en ${D.fecha_corte.slice(0,4)}</td><td>${(D.sin_movimiento_2026||[]).map(esc).join('<br>')||'—'}</td></tr>
+   <tr><td>En el portal sin estar en la hoja (se tratan como baja)</td><td>${Object.entries(DD).filter(([i,d])=>d.est==='baja'&&d.via!==undefined&&(tot[i]||0)>0).map(([i,d])=>`${i} ${esc(cap(d.n))}`).join(', ')||'—'}</td></tr>
+  </tbody></table></div>`;
+  $('avisos').innerHTML='';
+}
 
+// Eventos
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;render();window.scrollTo({top:0})});
+const seg=(id,k)=>document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{st[k]=b.dataset.v;document.querySelectorAll(`#${id} button`).forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+seg('segPer','per');seg('segTipo','tipo');seg('segRed','red');seg('bAgr','bAgr');
+$('fPrem').onchange=e=>{st.prem=e.target.value;render()};
+$('fSub').onchange=e=>{st.sub=e.target.value;render()};
+$('fSuc').onchange=e=>{st.suc=e.target.value.toUpperCase();render()};
+$('fComp').onchange=e=>{st.comp=e.target.value;render()};
+$('q').oninput=e=>{st.q=e.target.value;renderCV()};
+$('fAct').onchange=e=>{st.act=e.target.value;renderCV()};
+$('bMes').onchange=e=>{st.bMes=e.target.value;renderBonos()};
+$('limpiar').onclick=()=>{Object.assign(st,{prem:'',sub:'',suc:'',comp:'',q:'',act:''});['fPrem','fSub','fSuc','fComp','fAct'].forEach(i=>$(i).value='');$('q').value='';render()};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>render());
 (async()=>{
-  try{
-    const idx=await (await fetch('data/historial/index.json?v='+Date.now())).json();
-    const sh=document.getElementById('selHist');
-    sh.innerHTML=idx.map((x,i)=>`<option value="${i?x.fecha:''}">${x.fecha}${x.tipo==='cierre'?' (cierre)':''}${i?'':' · último'}</option>`).join('');
-    sh.onchange=e=>cargar(e.target.value);
-  }catch(e){}
+  try{const idx=await (await fetch('data/historial/index.json?v='+Date.now())).json();
+    $('selHist').innerHTML=idx.map((x,i)=>`<option value="${i?x.fecha:''}">${x.fecha}${x.tipo==='cierre'?' · cierre':''}</option>`).join('');
+    $('selHist').onchange=e=>cargar(e.target.value);}catch(e){}
   cargar('');
 })();
 </script>

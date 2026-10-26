@@ -11,6 +11,7 @@ Uso:
   python3 -I scripts/build_data.py --dir <carpeta> --fecha AAAA-MM-DD [--tipo semanal|cierre]
 """
 import argparse, json, os, shutil, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,15 +40,10 @@ def main():
     ap.add_argument("--tipo", default="semanal")
     a = ap.parse_args()
 
-    org = json.load(open(os.path.join(ROOT, "data", "organigrama.json")))
-    id2sub = org.get("id_to_sub", {})
-    bajas = set(org.get("bajas_globales", []))
-    subs = {k: {"premier": v["premier"], "nivel": v["nivel"], "lider": v["lider_id"], "lider_nombre": v.get("lider_nombre", "")}
-            for k, v in org["subterritorios"].items()}
 
     dist, padre = {}, {}
     out = {"generado": datetime.now().strftime("%Y-%m-%d %H:%M"), "fecha_corte": a.fecha, "tipo_corte": a.tipo,
-           "moneda": "USD", "subterritorios": subs, "compras": {}, "ventas": {}, "errores": []}
+           "moneda": "USD", "compras": {}, "ventas": {}, "errores": []}
 
     for rep in ("compras", "ventas"):
         for per in ("MTD", "YTD"):
@@ -58,8 +54,7 @@ def main():
             for x in f:
                 i = x["EntityCode"]
                 padre[i] = x.get("ParentEntityCode") or ""
-                dist.setdefault(i, {"n": x["EntityName"], "p": padre[i], "lv": x.get("EntityLevel") or "",
-                                    "c": x.get("EntityCompany") or ""})
+                dist.setdefault(i, {"n": x["EntityName"], "p": padre[i], "lv": x.get("EntityLevel") or ""})
                 if rep == "compras":
                     filas.append([i, R2(x["MerchUSD"]), R2(x["PremUSD"]), R2(x["MiscUSD"]),
                                   R2(x["PMerchUSD"]), R2(x["PPremUSD"]), R2(x["PMiscUSD"])])
@@ -78,20 +73,44 @@ def main():
                              "extraido": d["meta"].get("extraido"), "totales": tot, "filas": filas}
             print(f"OK {rep} {per}: {len(filas)} filas, totales {tot}")
 
-    # Subterritorio: organigrama; si no está, hereda del ancestro más cercano mapeado
-    def sub_de(i, prof=0):
-        if i in id2sub:
-            return id2sub[i]
+    # Estructura comercial: hoja oficial de Alejandro (scripts/estructura.py) + árbol del portal
+    import estructura
+    E = estructura.construir()
+    H = E["distribuidores"]
+    mtd_act = set()
+    for rep, k in (("compras", (1, 2)), ("ventas", (1,))):
+        for r in out[rep]["MTD"]["filas"]:
+            if sum(r[j] for j in k) > 0:
+                mtd_act.add(r[0])
+
+    def ancestro_activo(i, prof=0):
         p = padre.get(i)
         if not p or prof > 30:
-            return ""
-        return sub_de(p, prof + 1)
+            return None
+        if p in H and H[p]["est"] == "activo":
+            return p
+        return ancestro_activo(p, prof + 1)
 
     for i, v in dist.items():
-        v["s"] = sub_de(i)
-        v["org"] = i in id2sub      # True = en organigrama; False = asignado por árbol
-        v["b"] = i in bajas
+        v["pn"] = v.pop("n")                       # nombre en el portal
+        if i in H:
+            h = H[i]
+            v.update(n=h["n"] or v["pn"], s=h["s"], c=h["c"], pr=h["pr"], nv=h["nv"], suc=h["suc"], est=h["est"], fb=h["fb"])
+        else:
+            anc = ancestro_activo(i)
+            h = H.get(anc, {})
+            v.update(n=v["pn"], s=h.get("s", ""), c=h.get("c", anc or ""), pr=h.get("pr", ""), nv="", suc=h.get("suc", ""),
+                     est="nuevo" if i in mtd_act else "baja", fb="", via=anc or "")
+    sin_hoja = sorted(i for i, v in dist.items() if v["est"] == "nuevo")
+    if sin_hoja:
+        out["errores"].append("Compraron este mes y no están en tu hoja: " + ", ".join(f"{i} {dist[i]['n']}" for i in sin_hoja))
+    falt = [f"{i} {h['n']}" for i, h in H.items() if h["est"] == "activo" and i not in dist]
+    out["sin_movimiento_2026"] = falt
     out["distribuidores"] = dist
+    out["companias"] = E["companias"]
+    out["subterritorios"] = E["subterritorios"]
+    out["fuente_estructura"] = E["fuente"]
+    out["errores"] += E["avisos"]
 
     b = cargar(a.dir, "bonos")["filas"]
     out["bonos"] = [{"periodo": x["Period"], "overrides": R2(x["TotalOverrides"]), "ajuste": R2(x["TotalReserveAdjustment"]),
@@ -109,6 +128,17 @@ def main():
         if abs(p["saldo"] + c["cargos"] + c["pagos"] - c["saldo"]) > 0.05:
             out["errores"].append(f"fondo {c['periodo']}: saldo no cuadra")
 
+    mv = os.path.join(a.dir, "hycite_fondo_movimientos.json")
+    if os.path.exists(mv):
+        movs = json.load(open(mv))["filas"]
+        out["fondo_reembolsos"] = sorted([{"fecha": (x.get("VoucherDate") or "")[:10], "periodo": x["Period"], "monto": R2(x["Amount"]),
+                                            "desc": x.get("Description", ""), "recibos": bool(x.get("HasReceipts"))}
+                                           for x in movs if "Reemb" in (x.get("Description") or "")], key=lambda x: x["fecha"], reverse=True)
+        canc = {}
+        for x in movs:
+            if "Reemb" not in (x.get("Description") or ""):
+                canc[x["Period"]] = R2(canc.get(x["Period"], 0) + x["Amount"])
+        out["fondo_cancelaciones"] = canc
     os.makedirs(os.path.join(ROOT, "data", "historial"), exist_ok=True)
     dst = os.path.join(ROOT, "data", "latest.json")
     json.dump(out, open(dst, "w"), ensure_ascii=False, separators=(",", ":"))
@@ -117,8 +147,8 @@ def main():
     idx = json.load(open(idx_p)) if os.path.exists(idx_p) else []
     idx = [x for x in idx if x["fecha"] != a.fecha] + [{"fecha": a.fecha, "tipo": a.tipo}]
     json.dump(sorted(idx, key=lambda x: x["fecha"], reverse=True), open(idx_p, "w"), ensure_ascii=False, indent=1)
-    print("Por árbol (no en organigrama):", sum(1 for v in dist.values() if not v["org"]),
-          "| sin subterritorio:", sum(1 for v in dist.values() if not v["s"]))
+    from collections import Counter
+    print("Estados:", Counter(v["est"] for v in dist.values()), "| sin subterritorio:", [i for i, v in dist.items() if not v["s"]])
     print("Avisos:", out["errores"] or "ninguno")
     print("Escrito", dst)
 

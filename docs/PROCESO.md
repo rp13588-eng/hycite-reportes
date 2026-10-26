@@ -23,12 +23,15 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 | c | `Monthly Overrides` | `D('bonos')` (50 registros/página) | bonos |
 | d | `Estimated Monthly Overrides` | `D('bono_estimado')` | bono estimado |
 | e | `Network Leader Meeting Fund` | `D('fondo_nl')` | fondo |
+| f | `Monthly Overrides` | `BONOS(3)` (cierre: 3; semanal: 1) → esperar ~20 s, revisar `window.__st` | `bono_AAAAMM.pdf` (estado de cuenta de bonos, MXN) |
+| g | `TD Meeting Fund Payments` | `MOVS()` → esperar ~60 s, revisar `window.__fp` | `hycite_fondo_movimientos.json` (reembolsos y cancelaciones) |
 
 `P` = `'CURRENT'` (semanal) o `'AAAAMM'` (cierre). Verificar que `meta.filas` > 0 y rango/periodo correctos.
 
-3. Mac (osascript): `mkdir -p ~/Downloads/Hycite/<fecha> && mv ~/Downloads/hycite_*.json ~/Downloads/Hycite/<fecha>/`
+3. Mac (osascript): `mkdir -p ~/Downloads/Hycite/<fecha> && mv ~/Downloads/hycite_*.json ~/Downloads/bono_*.pdf ~/Downloads/Hycite/<fecha>/`
 4. Subir los 7 JSON al contenedor (device_stage_files) y correr:
    `python3 -I scripts/build_data.py --dir <carpeta> --fecha <AAAA-MM-DD> --tipo semanal|cierre`
+   y luego `python3 -I scripts/parse_bonos.py <carpeta>` (lee los PDF de bonos; valida que el detalle por distribuidor cuadre con el resumen).
    El script valida que la suma de distribuidores cuadre con el total del territorio (tolerancia $1) y que el saldo del fondo cuadre mes a mes; los avisos salen en el dashboard.
 5. Commit + push a `main` (GitHub Pages publica solo).
 
@@ -37,3 +40,14 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 - Ventas: volumen USD.
 - Bonos y fondo: MXN (con USD al TC del portal).
 - Subterritorio: `data/organigrama.json`; distribuidores nuevos heredan el de su patrocinador (árbol del portal, `ParentEntityCode`).
+
+## Estructura de la red (fuente oficial)
+- Hoja de Google **DISTRUBUCIONES CHASEP & MEJAB** (pestañas CHASEP, MEJAB, BAJAS). `scripts/estructura.py` la baja sola (export CSV).
+- Compañía: columna COMPAÑÍA; si ese nombre cuenta a otro, se sube hasta el que se cuenta a sí mismo. Ximena Mejía es compañía propia. Pablo Partida → Alejandro Alcalá.
+- Premier por subterritorio (Abdul 29365 cuenta en MEJAB).
+- En el portal pero no en la hoja = baja (historial al subterritorio/compañía de su patrocinador). Si compró en el mes = aviso "falta en tu hoja".
+- Niveles del portal: TD = Director de Territorio, L1–L4 = Distribuidor por nivel de precio, JV = Junior. Niveles de la hoja: PNL, ROYAL, BLUE, N1–N4, DJ.
+
+## Bonos y fondo
+- Estado de cuenta de bonos: POST /Reports/Overrides (sessionid del mes, currency=true, exportformat=pdf|excel). Resumen por concepto en MXN con IVA; detalle por distribuidor en USD con IVA (× tipo de cambio del mes).
+- Fondo NL: entra 1.75% de cada orden del territorio; salen reembolsos "Chasep Enterprise/Reemb Gtos PNL ... F.###" y cancelaciones de órdenes.
