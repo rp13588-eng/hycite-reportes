@@ -73,6 +73,29 @@ def main():
                              "extraido": d["meta"].get("extraido"), "totales": tot, "filas": filas}
             print(f"OK {rep} {per}: {len(filas)} filas, totales {tot}")
 
+    # Meses cerrados del año (hycite_<rep>_meses.json): mismas columnas que MTD
+    for rep in ("compras", "ventas"):
+        p = os.path.join(a.dir, f"hycite_{rep}_meses.json")
+        if not os.path.exists(p):
+            continue
+        meses = {}
+        for m, rows in sorted(json.load(open(p))["meses"].items()):
+            fil = []
+            for r in rows:
+                i = r[0]
+                dist.setdefault(i, {"n": r[-1], "p": r[-2] or "", "lv": ""})
+                padre.setdefault(i, r[-2] or "")
+                fil.append([i] + [R2(x) for x in (r[1:7] if rep == "compras" else r[1:3])])
+            meses[m] = fil
+        out[rep]["meses"] = meses
+        # validación: meses + mes en curso = año a la fecha (solo si el YTD es CURRENT y cubre los mismos meses)
+        k = (1, 2) if rep == "compras" else (1,)
+        s = sum(sum(r[j] for j in k) for f in meses.values() for r in f) + sum(sum(r[j] for j in k) for r in out[rep]["MTD"]["filas"])
+        y = sum(sum(r[j] for j in k) for r in out[rep]["YTD"]["filas"])
+        if out[rep]["YTD"].get("periodo") == "CURRENT" and abs(s - y) > 5:
+            out["errores"].append(f"{rep}: la suma de los meses (${s:,.2f}) no cuadra con el año a la fecha (${y:,.2f})")
+        print(f"OK {rep} meses: {list(meses)}  suma+mes {s:,.2f} vs YTD {y:,.2f}")
+
     # Estructura comercial: hoja oficial de Alejandro (scripts/estructura.py) + árbol del portal
     import estructura
     E = estructura.construir()

@@ -24,6 +24,7 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 | d | `Estimated Monthly Overrides` | `D('bono_estimado')` | bono estimado |
 | e | `Network Leader Meeting Fund` | `D('fondo_nl')` | fondo |
 | f | `Monthly Overrides` | `BONOS(3)` (cierre: 3; semanal: 1) → esperar ~20 s, revisar `window.__st` | `bono_AAAAMM.pdf` (estado de cuenta de bonos, MXN) |
+| h | `Territory Purchases` y `Territory Volume` | `SERIE('compras_meses', [meses cerrados del año])` y `SERIE('ventas_meses', [...])` → ~10 s por mes; revisar `window.__se`. El build valida que la suma de meses + mes en curso = año a la fecha | `hycite_compras_meses.json`, `hycite_ventas_meses.json` |
 | g | `TD Meeting Fund Payments` | `MOVS()` → esperar ~60 s, revisar `window.__fp` | `hycite_fondo_movimientos.json` (reembolsos y cancelaciones) |
 
 `P` = `'CURRENT'` (semanal) o `'AAAAMM'` (cierre). Verificar que `meta.filas` > 0 y rango/periodo correctos.
@@ -51,3 +52,7 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 ## Bonos y fondo
 - Estado de cuenta de bonos: POST /Reports/Overrides (sessionid del mes, currency=true, exportformat=pdf|excel). Resumen por concepto en MXN con IVA; detalle por distribuidor en USD con IVA (× tipo de cambio del mes).
 - Fondo NL: entra 1.75% de cada orden del territorio; salen reembolsos "Chasep Enterprise/Reemb Gtos PNL ... F.###" y cancelaciones de órdenes.
+
+## Sesión del portal
+- La sesión del portal vence aprox. 2 horas después de iniciar, aunque se recargue la página (el keep-alive solo evita el cierre por inactividad).
+- Si al correr aparece la pantalla de login: no escribir credenciales; avisar a Alejandro y detenerse.
