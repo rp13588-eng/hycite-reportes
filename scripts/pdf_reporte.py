@@ -46,8 +46,7 @@ def periodo_label(d):
     return y, m
 
 
-def main():
-    d = json.load(open(os.path.join(ROOT, "data", "latest.json")))
+def calcular(d):
     y, m = periodo_label(d)
     cierre = d.get("tipo_corte") == "cierre"
     titulo = f"Cierre de {MES[m-1]} {y}" if cierre else f"Corte al {int(d['fecha_corte'][8:])} de {MES[int(d['fecha_corte'][5:7])-1]} {d['fecha_corte'][:4]}"
@@ -93,6 +92,15 @@ def main():
     fondo = sorted(d.get("fondo", []), key=lambda x: -x["periodo"])
     f0 = fondo[0] if fondo else None
     avisos = d.get("errores", [])
+    return dict(y=y, m=m, cierre=cierre, titulo=titulo, mes_txt=mes_txt, k=k, filas_sub=filas_sub, suben=suben, bajan=bajan,
+                bonos=bonos[:6], est=est, fondo=fondo[:6], avisos=avisos, fecha_corte=d["fecha_corte"], generado=d.get("generado", ""))
+
+
+def render(A):
+    y, m, cierre, titulo, mes_txt, k = A["y"], A["m"], A["cierre"], A["titulo"], A["mes_txt"], A["k"]
+    filas_sub, suben, bajan, bonos, est, fondo, avisos = A["filas_sub"], A["suben"], A["bajan"], A["bonos"], A["est"], A["fondo"], A["avisos"]
+    f0 = fondo[0] if fondo else None
+    d = {"generado": A["generado"], "fecha_corte": A["fecha_corte"]}
 
     # ---------- HTML ----------
     E = html.escape
@@ -131,41 +139,41 @@ def main():
 :root{{--navy:#064180;--blue:#006BB5;--tint:#EEF4FB;--ink:#16202C;--ink2:#5B6675;--line:#E2E7EE;--line2:#F0F3F7;
 --verde:#1E7D45;--verdebg:#E7F4EC;--ambar:#8A6100;--ambarbg:#FFF4D6;--rojo:#B3261E;--rojobg:#FCE9E7}}
 *{{box-sizing:border-box}}
-body{{margin:0;font:11px/1.4 'Archivo',system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+body{{margin:0;font:13.5px/1.4 'Archivo',system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .pg{{width:8.5in;height:11in;padding:.45in .5in .4in;position:relative;page-break-after:always;overflow:hidden}}
 .pg:last-child{{page-break-after:auto}}
 header{{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:14px}}
-.mark{{color:var(--navy);font-stretch:72%;font-weight:800;font-size:24px;line-height:1}}
-.mark small{{display:block;font-stretch:100%;font-weight:500;font-size:11px;color:var(--ink2);margin-top:5px}}
-.cut{{text-align:right;font-size:10px;color:var(--ink2)}} .cut b{{display:block;font-size:15px;color:var(--ink)}}
-h2{{font-size:12.5px;margin:16px 0 7px;color:var(--navy);text-transform:uppercase;letter-spacing:.6px}}
-h2 small{{text-transform:none;letter-spacing:0;color:var(--ink2);font-weight:500;font-size:10px;margin-left:6px}}
+.mark{{color:var(--navy);font-stretch:72%;font-weight:800;font-size:30px;line-height:1}}
+.mark small{{display:block;font-stretch:100%;font-weight:500;font-size:11px;color:var(--ink2);margin-top:5px;font-size:13px}}
+.cut{{text-align:right;font-size:12px;color:var(--ink2)}} .cut b{{display:block;font-size:19px;color:var(--ink)}}
+h2{{font-size:15px;margin:16px 0 7px;color:var(--navy);text-transform:uppercase;letter-spacing:.6px}}
+h2 small{{text-transform:none;letter-spacing:0;color:var(--ink2);font-weight:500;font-size:12px;margin-left:6px}}
 .grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}}
 .kpi{{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:9px 11px}}
 .kpi.verde{{border-left-color:var(--verde)}} .kpi.ambar{{border-left-color:#E0A800}} .kpi.rojo{{border-left-color:var(--rojo)}}
-.kl{{font-size:10px;color:var(--ink2);font-weight:600}} .kv{{font-size:21px;font-weight:800;margin:2px 0}}
-.kd{{font-weight:700;font-size:11px}} .kd span{{font-weight:400;color:var(--ink2)}} .ks{{font-size:9.5px;color:var(--ink2);margin-top:2px}}
+.kl{{font-size:12.5px;color:var(--ink2);font-weight:600}} .kv{{font-size:28px;font-weight:800;margin:2px 0}}
+.kd{{font-weight:700;font-size:13.5px}} .kd span{{font-weight:400;color:var(--ink2)}} .ks{{font-size:12px;color:var(--ink2);margin-top:2px}}
 .verde .kd{{color:var(--verde)}} .ambar .kd{{color:var(--ambar)}} .rojo .kd{{color:var(--rojo)}}
 .two{{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
 .box{{border:1px solid var(--line);border-radius:8px;padding:9px 12px}}
-.box h3{{margin:0 0 6px;font-size:11px}} .box.up h3{{color:var(--verde)}} .box.dn h3{{color:var(--rojo)}}
-ul.rk{{list-style:none;margin:0;padding:0}} ul.rk li{{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line2)}}
+.box h3{{margin:0 0 6px;font-size:14px}} .box.up h3{{color:var(--verde)}} .box.dn h3{{color:var(--rojo)}}
+ul.rk{{list-style:none;margin:0;padding:0}} ul.rk li{{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line2)}}
 ul.rk li:last-child{{border-bottom:0}} .vac{{color:var(--ink2)}}
 .up{{color:var(--verde)}} .down{{color:var(--rojo)}} .mut{{color:var(--ink2)}}
-table{{width:100%;border-collapse:collapse;font-size:10px}}
-th{{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line);padding:4px 5px;font-size:9.5px}}
-td{{padding:3.4px 5px;border-bottom:1px solid var(--line2)}} .n{{text-align:right;white-space:nowrap}} th.n{{text-align:right}}
+table{{width:100%;border-collapse:collapse;font-size:13px}}
+th{{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1.5px solid var(--line);padding:5px 6px;font-size:11.5px}}
+td{{padding:5px 6px;border-bottom:1px solid var(--line2)}} .n{{text-align:right;white-space:nowrap}} th.n{{text-align:right}}
 tr.tot td{{font-weight:800;border-top:1.5px solid var(--ink);border-bottom:0;background:var(--tint)}}
-.dot{{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:0}}
+.dot{{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}}
 .dot.verde{{background:var(--verde)}} .dot.ambar{{background:#E0A800}} .dot.rojo{{background:var(--rojo)}} .dot.nuevo{{background:#9AA5B4}}
-.tag{{font-size:8.5px;color:var(--ink2);font-weight:600}}
+.tag{{font-size:10px;color:var(--ink2);font-weight:600}}
 .money{{display:grid;grid-template-columns:1fr 1fr;gap:10px}}
 .big{{display:flex;gap:16px;margin-bottom:6px}} .big div{{flex:1;background:var(--tint);border-radius:7px;padding:7px 10px}}
-.big span{{display:block;font-size:9.5px;color:var(--ink2);font-weight:600}} .big b{{font-size:16px}}
-.aviso{{background:var(--ambarbg);border-radius:8px;padding:8px 12px;margin-top:12px;font-size:10px}} .aviso b{{color:var(--ambar)}}
+.big span{{display:block;font-size:12px;color:var(--ink2);font-weight:600}} .big b{{font-size:21px}}
+.aviso{{background:var(--ambarbg);border-radius:8px;padding:10px 14px;margin-top:14px;font-size:12.5px}} .aviso b{{color:var(--ambar)}}
 .aviso ul{{margin:4px 0 0;padding-left:16px}}
-footer{{position:absolute;left:.5in;right:.5in;bottom:.3in;display:flex;justify-content:space-between;font-size:9px;color:var(--ink2);border-top:1px solid var(--line);padding-top:5px}}
-.ley{{font-size:9px;color:var(--ink2);margin-top:5px}}
+footer{{position:absolute;left:.5in;right:.5in;bottom:.3in;display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink2);border-top:1px solid var(--line);padding-top:5px}}
+.ley{{font-size:11px;color:var(--ink2);margin-top:5px}}
 </style></head><body>
 <section class="pg">
 <header><div class="mark">REPORTE HYCITE · CHASEP<small>Territorio 13588 · Alejandro Sepúlveda</small></div>
@@ -231,6 +239,18 @@ footer{{position:absolute;left:.5in;right:.5in;bottom:.3in;display:flex;justify-
     txt = "\n".join(x for x in t if x)
     open(os.path.join(out_dir, "resumen.txt"), "w").write(txt)
     print(json.dumps({"pdf": pdf, "file": nombre, "resumen": os.path.join(out_dir, "resumen.txt")}, ensure_ascii=False))
+
+
+def main():
+    a = sys.argv[1:]
+    if "--agg-in" in a:
+        A = json.load(open(a[a.index("--agg-in") + 1]))
+    else:
+        A = calcular(json.load(open(os.path.join(ROOT, "data", "latest.json"))))
+    if "--agg-out" in a:  # solo calcula (sin Playwright), p. ej. en la Mac
+        json.dump(A, open(a[a.index("--agg-out") + 1], "w"), ensure_ascii=False, separators=(",", ":"))
+        return
+    render(A)
 
 
 if __name__ == "__main__":
