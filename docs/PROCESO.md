@@ -7,6 +7,8 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 - **Cierre de mes**: día 1 de cada mes ~11 am. Periodo = mes recién cerrado `AAAAMM` (ej. 202610). `--tipo cierre`.
 
 ## Requisitos
+- Chrome de la Mac mini = deviceId `a020add6-d2e4-434e-8d09-8a2a675c88f3` (si hay varios Chrome conectados, select_browser con ese).
+- La tarea programada necesita acceso a la carpeta `~/Downloads/Hycite` (permiso de carpeta en la Mac).
 - Mac mini encendida, Chrome abierto con la extensión Claude in Chrome y una pestaña de distributors.hycite.com con sesión iniciada.
 - LaunchAgent `com.chasep.hycite-keepalive` recarga la pestaña cada 9 min (~/Claude/hycite-keepalive).
 - Chrome: "Descargas automáticas" permitidas para distributors.hycite.com.
@@ -35,6 +37,8 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
    y luego `python3 -I scripts/parse_bonos.py <carpeta>` (lee los PDF de bonos; valida que el detalle por distribuidor cuadre con el resumen).
    El script valida que la suma de distribuidores cuadre con el total del territorio (tolerancia $1) y que el saldo del fondo cuadre mes a mes; los avisos salen en el dashboard.
 5. Commit + push a `main` (GitHub Pages publica solo).
+6. PDF para WhatsApp: `python3 -I scripts/pdf_reporte.py` → `out/Reporte_Hycite_CHASEP_<fecha>[_cierre].pdf` (carta, 2 páginas: compras/ventas/subterritorios y bonos/fondo) y `out/resumen.txt`. `out/` NO se sube al repo (bonos y fondo son privados).
+   Entrega: device_commit_files a `~/Downloads/Hycite/<carpeta del corte>/`, copiar con osascript a `~/.local/share/whatsapp-mcp/outbox/` y send_file al chat propio de Alejandro (12108151417@s.whatsapp.net) con el resumen como caption. Solo a Alejandro.
 
 ## Datos
 - Compras: mercancía (Merch), premiums (Prem) y misc, USD, actual y año anterior, propias del distribuidor. Dashboard: "Mercancía + premiums" (default) o "Solo mercancía".
