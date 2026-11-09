@@ -38,7 +38,8 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
    El script valida que la suma de distribuidores cuadre con el total del territorio (tolerancia $1) y que el saldo del fondo cuadre mes a mes; los avisos salen en el dashboard.
 5. Commit + push a `main` (GitHub Pages publica solo).
 6. PDF para WhatsApp: `python3 -I scripts/pdf_reporte.py` → `out/Reporte_Hycite_CHASEP_<fecha>[_cierre].pdf` (carta, 2 páginas: compras/ventas/subterritorios y bonos/fondo) y `out/resumen.txt`. `out/` NO se sube al repo (bonos y fondo son privados).
-   Entrega: device_commit_files a `~/Downloads/Hycite/<carpeta del corte>/`, copiar con osascript a `~/.local/share/whatsapp-mcp/outbox/` y send_file al chat propio de Alejandro (12108151417@s.whatsapp.net) con el resumen como caption. Solo a Alejandro.
+7. WhatsApp (siempre, semanal y cierre): dos mensajes de texto al grupo "Reporte crecimiento Hycite" (120363431292937289@g.us): (a) compras y ventas USD mes/año vs año anterior + subterritorios >10% abajo + link; (b) bonos (último y estimado) y saldo del fondo NL en MXN. Revisar antes que no se haya enviado ya ese corte.
+   Entrega del PDF: device_commit_files a `~/Downloads/Hycite/<carpeta del corte>/`, copiar con osascript a `~/.local/share/whatsapp-mcp/outbox/` y send_file al chat propio de Alejandro (12108151417@s.whatsapp.net) con el resumen como caption. Solo a Alejandro.
 
 ## Datos
 - Compras: mercancía (Merch), premiums (Prem) y misc, USD, actual y año anterior, propias del distribuidor. Dashboard: "Mercancía + premiums" (default) o "Solo mercancía".
