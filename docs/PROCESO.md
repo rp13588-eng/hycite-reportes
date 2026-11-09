@@ -41,6 +41,10 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 7. WhatsApp (siempre, semanal y cierre): dos mensajes de texto al grupo "Reporte crecimiento Hycite" (120363431292937289@g.us): (a) compras y ventas USD mes/año vs año anterior + subterritorios >10% abajo + link; (b) bonos (último y estimado) y saldo del fondo NL en MXN. Revisar antes que no se haya enviado ya ese corte.
    Entrega del PDF: device_commit_files a `~/Downloads/Hycite/<carpeta del corte>/`, copiar con osascript a `~/.local/share/whatsapp-mcp/outbox/` y send_file al chat propio de Alejandro (12108151417@s.whatsapp.net) con el resumen como caption. Solo a Alejandro.
 
+## Dashboard
+- Descargar (botón arriba): el usuario escoge secciones de la pestaña actual → imagen para WhatsApp (1080 px, una por sección; en el celular abre compartir) o PDF carta. Respeta los filtros puestos.
+- Bonos y Fondo: "Comparativo de años" en año total (año completo y mismo tramo ene–mes) o mes por mes (últimos 4 años).
+
 ## Datos
 - Compras: mercancía (Merch), premiums (Prem) y misc, USD, actual y año anterior, propias del distribuidor. Dashboard: "Mercancía + premiums" (default) o "Solo mercancía".
 - Ventas: volumen USD.
@@ -54,7 +58,12 @@ Dashboard: https://rp13588-eng.github.io/hycite-reportes/
 - En el portal pero no en la hoja = baja (historial al subterritorio/compañía de su patrocinador). Si compró en el mes = aviso "falta en tu hoja".
 - Niveles del portal: TD = Director de Territorio, L1–L4 = Distribuidor por nivel de precio, JV = Junior. Niveles de la hoja: PNL, ROYAL, BLUE, N1–N4, DJ.
 
-## Bonos y fondo
+## Bonos y fondo (privados, cifrados)
+- En el repo público van CIFRADOS: `latest.json` e historial llevan `privado` (bonos, bono_estimado, fondo, reembolsos, cancelaciones) y `data/bonos_detalle.json` es {periodo: bloque cifrado}. El dashboard pide un PIN numérico para abrirlos.
+- Esquema híbrido (`scripts/cripto.py`): `data/llave.json` trae la llave pública RSA (los cortes cifran sin PIN) y la privada cifrada con PBKDF2(PIN). Los cortes automáticos NO necesitan el PIN.
+- Copia en claro solo en `out/privado.json` (no se sube) para `pdf_reporte.py` y los mensajes de WhatsApp.
+- Cambiar PIN: `python3 -I scripts/cripto.py cambiar <PIN_ACTUAL> <PIN_NUEVO>` y commit de data/llave.json. Verificar: `python3 -I scripts/cripto.py probar <PIN>`.
+- Nunca escribir el PIN en el repo, en commits ni en mensajes al grupo.
 - Estado de cuenta de bonos: POST /Reports/Overrides (sessionid del mes, currency=true, exportformat=pdf|excel). Resumen por concepto en MXN con IVA; detalle por distribuidor en USD con IVA (× tipo de cambio del mes).
 - Fondo NL: entra 1.75% de cada orden del territorio; salen reembolsos "Chasep Enterprise/Reemb Gtos PNL ... F.###" y cancelaciones de órdenes.
 

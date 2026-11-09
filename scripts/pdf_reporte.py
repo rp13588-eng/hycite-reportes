@@ -246,7 +246,11 @@ def main():
     if "--agg-in" in a:
         A = json.load(open(a[a.index("--agg-in") + 1]))
     else:
-        A = calcular(json.load(open(os.path.join(ROOT, "data", "latest.json"))))
+        d = json.load(open(os.path.join(ROOT, "data", "latest.json")))
+        pv = os.path.join(ROOT, "out", "privado.json")  # bonos y fondo en claro (solo local)
+        if os.path.exists(pv):
+            d.update(json.load(open(pv)))
+        A = calcular(d)
     if "--agg-out" in a:  # solo calcula (sin Playwright), p. ej. en la Mac
         json.dump(A, open(a[a.index("--agg-out") + 1], "w"), ensure_ascii=False, separators=(",", ":"))
         return

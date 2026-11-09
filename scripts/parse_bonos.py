@@ -72,8 +72,11 @@ def detalle(t):
 def main():
     d = sys.argv[1]
     dst = os.path.join(ROOT, 'data', 'bonos_detalle.json')
-    out = json.load(open(dst)) if os.path.exists(dst) else {}
-    lt = json.load(open(os.path.join(ROOT, 'data', 'latest.json')))
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import cripto
+    out = json.load(open(dst)) if os.path.exists(dst) else {}  # {periodo: bloque cifrado}
+    pv = os.path.join(ROOT, 'out', 'privado.json')  # lo deja build_data.py (en claro, no se sube)
+    lt = json.load(open(pv)) if os.path.exists(pv) else json.load(open(os.path.join(ROOT, 'data', 'latest.json')))
     tc = {str(x['periodo']): x.get('tc') for x in lt.get('bonos', [])}
     for f in sorted(glob.glob(os.path.join(d, 'bono_*.pdf'))):
         p = re.search(r'bono_(\d{6})', f).group(1)
@@ -89,9 +92,10 @@ def main():
                 chk[c] = round(dif * 100, 2)
         r['detalle_usd'] = det
         r['validacion_pct'] = chk
-        out[p] = r
+        out[p] = cripto.cifrar(r)
         malos = {c: x for c, x in chk.items() if x > 1.5}
         print(p, 'pagado', r['total_pagado'], 'distribuidores', len(det), 'difs%', malos or 'OK')
+    out = {k: (v if cripto.es_cifrado(v) else cripto.cifrar(v)) for k, v in out.items()}
     json.dump(dict(sorted(out.items())), open(dst, 'w'), ensure_ascii=False, separators=(',', ':'))
     print('Escrito', dst, len(out), 'meses')
 

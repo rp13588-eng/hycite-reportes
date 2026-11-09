@@ -162,6 +162,15 @@ def main():
             if "Reemb" not in (x.get("Description") or ""):
                 canc[x["Period"]] = R2(canc.get(x["Period"], 0) + x["Amount"])
         out["fondo_cancelaciones"] = canc
+    # Bonos y fondo son privados: van cifrados (se abren con PIN en el dashboard).
+    # Copia en claro solo en out/ (no se sube) para pdf_reporte.py y parse_bonos.py.
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import cripto
+    PRIV = ("bonos", "bono_estimado", "fondo", "fondo_reembolsos", "fondo_cancelaciones")
+    priv = {k: out.pop(k) for k in PRIV if k in out}
+    os.makedirs(os.path.join(ROOT, "out"), exist_ok=True)
+    json.dump(priv, open(os.path.join(ROOT, "out", "privado.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+    out["privado"] = cripto.cifrar(priv)
     os.makedirs(os.path.join(ROOT, "data", "historial"), exist_ok=True)
     dst = os.path.join(ROOT, "data", "latest.json")
     json.dump(out, open(dst, "w"), ensure_ascii=False, separators=(",", ":"))
